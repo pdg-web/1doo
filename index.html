@@ -104,6 +104,17 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem
 .stars { display: inline-flex; letter-spacing: 1px; font-size: 0.82rem; line-height: 1; }
 .stars .on { color: var(--accent); }
 .stars .off { color: var(--line); }
+.slider { min-width: 0; }
+.viewport { overflow: hidden; }
+.track { display: flex; transition: transform .7s cubic-bezier(.65, 0, .25, 1); }
+.slide { flex: 0 0 100%; min-width: 0; }
+.sdots { display: flex; gap: 4px; margin-top: 10px; }
+.sdot { width: 32px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; }
+.sdot span { display: block; width: 100%; height: 2px; background: var(--line); }
+.sdot[aria-current="true"] span { background: var(--fg); }
+.note { font-size: 0.78rem; color: var(--muted); margin: 0 0 12px; }
+.sec-head.single { grid-template-columns: minmax(0, 1fr); margin-bottom: 28px; }
+@media (prefers-reduced-motion: reduce) { .track { transition: none; } }
 .empty { padding: 28px 0; color: var(--muted); border-bottom: 1px solid var(--line); }
 .count { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); margin: 0 0 10px; }
 
@@ -170,26 +181,22 @@ img{max-width:100%}
           <a class="btn ghost" href="#ratio">추출 비율 계산</a>
         </div>
       </div>
-      <div class="sheet" aria-label="원두 정보 예시">
-        <div class="head"><small>Sample Sheet</small>서울 시네마 블렌드</div>
-        <div class="row"><span>브랜드</span><span>프릳츠</span></div>
-        <div class="row"><span>로스팅</span><span>라이트</span></div>
-        <div class="row"><span>컵 노트</span><span>자두 · 라즈베리 · 레몬 껍질</span></div>
-        <div class="row"><span>용량</span><span>원두 200g</span></div>
-        <div class="row"><span>추천 추출</span><span>핸드드립 1:16</span></div>
+      <div class="slider" id="slider" role="region" aria-roledescription="carousel" aria-label="원두 정보 샘플">
+        <div class="viewport"><div class="track" id="track"><div class="slide"><div class="sheet"><div class="head"><small>Sample Sheet</small>불러오는 중</div></div></div></div></div>
+        <div class="sdots" id="sdots"></div>
       </div>
     </div>
 
     <section id="finder">
-      <div class="sec-head">
+      <div class="sec-head single">
         <div><p class="eyebrow">Beans by Brand</p><h2>브랜드별 원두</h2></div>
-        <p class="desc">온라인 판매로 알려진 6개 로스터리의 원두, 드립백, 캡슐, 콜드브루를 브랜드별로 모았습니다. 추천 별은 마켓컬리 후기 수로 정한 인기 지표이고 맛 평가가 아닙니다. 후기는 묶음 상품 단위라 같은 묶음의 상품은 별이 같습니다. 정보는 2026년 10월 20일 기준입니다.</p>
       </div>
       <div class="filters">
         <div class="fgroup"><span class="flabel">브랜드</span><div class="chips" id="chips-brand"></div></div>
         <div class="fgroup"><span class="flabel">형태</span><div class="chips" id="chips-form"></div></div>
       </div>
       <p class="count" id="count" aria-live="polite"></p>
+      <p class="note" id="note"></p>
       <div class="list" id="beans"></div>
     </section>
 
@@ -241,45 +248,14 @@ img{max-width:100%}
   var SHOP = "https://search.shopping.naver.com/search/all?query=";
   function buy(q) { return SHOP + encodeURIComponent(q); }
 
-  var brands = ["커피리브레", "모모스커피", "프릳츠", "나무사이로", "센터커피", "테라로사"];
-  // rv: 해당 상품이 속한 마켓컬리 묶음 상품 페이지의 후기 수 (2026-10-20 확인). null은 확인하지 못한 경우.
-  var beans = [
-    { brand: "커피리브레", name: "배드 블러드", notes: "과일 시럽 같은 단맛", roast: 2, roastLabel: "중약배전", form: "원두", size: "200g", rv: 5229 },
-    { brand: "커피리브레", name: "노 서프라이즈", notes: "농밀한 과일의 단맛", roast: 3, roastLabel: "중배전", form: "원두", size: "200g", rv: 5229 },
-    { brand: "커피리브레", name: "다크 리브레", notes: "다크 초콜릿, 견과의 고소함", roast: 5, roastLabel: "강배전", form: "원두", size: "200g", rv: 5229 },
-
-    { brand: "모모스커피", name: "보랏빛 향기 블렌드", notes: "라벤더, 포도, 자두주스, 카카오", roast: 2, roastLabel: "미디엄 라이트", form: "원두", size: "200g", rv: 248 },
-    { brand: "모모스커피", name: "에스 쇼콜라 블렌드", notes: "카카오, 헤이즐넛, 크리미한 질감", roast: 5, roastLabel: "강배전", form: "드립백", size: "10g x 7개", rv: 5939 },
-    { brand: "모모스커피", name: "부산 블렌드", notes: "구운 피칸, 캐러멜 단맛, 약한 산미", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 5939 },
-    { brand: "모모스커피", name: "프루티 봉봉 블렌드", notes: "오렌지, 시트러스, 캐러멜 단맛", roast: 0, roastLabel: "", form: "드립백", size: "12g x 7개", rv: 5939 },
-    { brand: "모모스커피", name: "므쵸베리 블렌드", notes: "베리류, 초콜릿 같은 묵직한 단맛", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 5939 },
-    { brand: "모모스커피", name: "에티오피아 싱글오리진", notes: "장미, 블루베리, 카카오닙스", roast: 0, roastLabel: "", form: "드립백", size: "12g x 7개", rv: 5939 },
-
-    { brand: "프릳츠", name: "올드독 블렌드", notes: "다크 초콜릿, 흑설탕, 구운 피칸", roast: 5, roastLabel: "강배전", form: "원두", size: "200g", rv: 6615 },
-    { brand: "프릳츠", name: "서울 시네마 블렌드", notes: "자두, 라즈베리, 레몬 껍질, 아쌈 티", roast: 1, roastLabel: "라이트", form: "원두", size: "200g", rv: 6615 },
-    { brand: "프릳츠", name: "잘 되어 가시나 블렌드", notes: "말린 과일, 캐러멜, 유자 마멀레이드", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 6615 },
-
-    { brand: "나무사이로", name: "와이칸", notes: "바닐라, 베리, 깨끗하고 긴 여운", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 5380 },
-    { brand: "나무사이로", name: "브릴리", notes: "건과일, 고소한 견과류, 향신료, 누룽지 사탕", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 5380 },
-    { brand: "나무사이로", name: "노래하는 새", notes: "자스민, 파인애플, 딸기, 자두", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 5380 },
-
-    { brand: "센터커피", name: "아이스브레이커", notes: "사과, 자두, 마카다미아", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
-    { brand: "센터커피", name: "메이데이", notes: "복합적인 과일 풍미, 카라멜", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
-    { brand: "센터커피", name: "에티오피아 예가체프 아리차 워시드", notes: "탠저린, 레몬그라스, 아몬드", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
-    { brand: "센터커피", name: "콜롬비아 무헤레스 톨리만 워시드", notes: "포도, 체리, 다크 초콜릿", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
-    { brand: "센터커피", name: "브라질 파젠다 산타 이네스 내추럴", notes: "오렌지, 마카다미아, 밀크 초콜릿", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
-    { brand: "센터커피", name: "프라이데이 커피 캡슐", notes: "체리, 무화과, 흑설탕 (네스프레소 호환)", roast: 0, roastLabel: "", form: "캡슐", size: "10개입", rv: 488 },
-    { brand: "센터커피", name: "게이샤 콜드브루", notes: "살구, 청사과 산미, 밀크 초콜릿의 단맛", roast: 0, roastLabel: "", form: "콜드브루", size: "200mL", rv: 2031 },
-    { brand: "센터커피", name: "디카페인 드립백", notes: "맛 설명 미표기", roast: 0, roastLabel: "", form: "디카페인", size: "10g x 7개", rv: null },
-
-    { brand: "테라로사", name: "던 베리 블렌드", notes: "자두와 베리, 초콜릿의 단맛", roast: 1, roastLabel: "약배전", form: "원두", size: "250g / 500g", rv: 144 },
-    { brand: "테라로사", name: "강릉 블렌드", notes: "과일 같은 단맛과 산미, 쌉쌀하고 부드러운 향", roast: 0, roastLabel: "", form: "원두", size: "250g", rv: 247 },
-    { brand: "테라로사", name: "어센틱 에스프레소 블렌드", notes: "사과 같은 상큼함, 달콤한 캐러멜", roast: 0, roastLabel: "", form: "원두", size: "250g", rv: 247 },
-    { brand: "테라로사", name: "하우스 드립 블렌드", notes: "과일의 단맛, 고소한 견과류, 깊은 향", roast: 0, roastLabel: "", form: "원두", size: "250g", rv: 247 }
-  ];
-  beans.forEach(function (b, i) { b.i = i; });
-  // 추천 별: 후기 수 기준 인기 지표 (5,000건 이상 5개, 2,000건 4개, 1,000건 3개, 400건 2개, 그 미만 1개)
-  function stars(rv) { if (rv == null) return 0; return rv >= 5000 ? 5 : rv >= 2000 ? 4 : rv >= 1000 ? 3 : rv >= 400 ? 2 : 1; }
+  var brands = [], beans = [], forms = ["전체"], UPDATED = "";
+  // 추천 별: stars 값이 있으면 그 값, 없으면 후기 수 기준 (5,000건 이상 5개, 2,000건 4개, 1,000건 3개, 400건 2개, 그 미만 1개)
+  function stars(b) {
+    if (b.stars >= 1 && b.stars <= 5) return Math.round(b.stars);
+    var rv = b.reviews;
+    if (rv == null) return 0;
+    return rv >= 5000 ? 5 : rv >= 2000 ? 4 : rv >= 1000 ? 3 : rv >= 400 ? 2 : 1;
+  }
 
   var gear = [
     { name: "핸드 그라인더", check: "<b>분쇄도 조절이 세밀한지</b> 확인하세요. 조절 단계가 촘촘하면 같은 원두도 맛을 맞추기 쉽습니다.", q: "핸드 그라인더 커피" },
@@ -289,7 +265,6 @@ img{max-width:100%}
   ];
 
   var state = { brand: "전체", form: "전체" };
-  var forms = ["전체", "원두", "드립백", "캡슐", "콜드브루", "디카페인"];
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
@@ -312,7 +287,7 @@ img{max-width:100%}
       return (state.brand === "전체" || b.brand === state.brand) &&
              (state.form === "전체" || b.form === state.form);
     });
-    rows.sort(function (x, y) { return ((y.rv == null ? -1 : y.rv) - (x.rv == null ? -1 : x.rv)) || (x.i - y.i); });
+    rows.sort(function (x, y) { return ((y.reviews == null ? -1 : y.reviews) - (x.reviews == null ? -1 : x.reviews)) || (x.i - y.i); });
     document.getElementById("count").textContent = rows.length + "개 상품 · 후기가 많은 순";
     var box = document.getElementById("beans");
     if (!rows.length) { box.innerHTML = '<p class="empty">이 브랜드는 선택한 형태의 상품이 아직 없습니다. 형태를 \u0027전체\u0027로 바꿔 보세요.</p>'; return; }
@@ -325,17 +300,17 @@ img{max-width:100%}
       } else {
         roast = '<span>로스팅 미표기</span>';
       }
-      var n = stars(b.rv), st = "";
+      var n = stars(b), st = "";
       for (var k = 1; k <= 5; k++) st += '<span class="' + (k <= n ? "on" : "off") + '">★</span>';
-      var rating = b.rv == null
-        ? '<div class="rating"><span class="stars" aria-hidden="true">' + st + '</span><span class="rv">후기 정보 없음</span></div>'
-        : '<div class="rating"><span class="stars" role="img" aria-label="추천 ' + n + '개 (5개 만점)">' + st + '</span><span class="rv">후기 ' + b.rv.toLocaleString("ko-KR") + '건</span></div>';
+      var rvText = b.reviews == null ? "후기 정보 없음" : "후기 " + b.reviews.toLocaleString("ko-KR") + "건";
+      var rating = '<div class="rating"><span class="stars" role="img" aria-label="' + (n ? "추천 " + n + "개 (5개 만점)" : "추천 별 없음") + '">' + st + '</span><span class="rv">' + rvText + '</span></div>';
+      var link = /^https?:\/\//.test(b.url || "") ? b.url : null;
       var q = b.brand + " " + b.name + (b.form === "원두" ? " 원두" : " " + b.form);
       return '<article class="item">' +
         '<div><h3>' + esc(b.name) + '</h3><div class="sub">' + esc(b.brand) + ' · ' + esc(b.form) + ' ' + esc(b.size) + '</div>' + rating + '</div>' +
         '<p class="notes">' + esc(b.notes) + '</p>' +
         '<div class="roast">' + roast + '</div>' +
-        '<a class="go" href="' + buy(q) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' +
+        '<a class="go" href="' + esc(link || buy(q)) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' +
         '</article>';
     }).join("");
   }
@@ -369,13 +344,83 @@ img{max-width:100%}
     };
   }
 
-  var brandOpts = [{ v: "전체", label: "전체 " + beans.length }].concat(brands.map(function (n) {
-    var c = beans.filter(function (b) { return b.brand === n; }).length;
-    return { v: n, label: n + " " + c };
-  }));
-  chips("chips-brand", brandOpts, "brand");
-  chips("chips-form", forms.map(function (f) { return { v: f, label: f }; }), "form");
-  renderBeans(); renderGear(); renderRatio(); calc();
+  function initList() {
+    var brandOpts = [{ v: "전체", label: "전체 " + beans.length }].concat(brands.map(function (n) {
+      var c = beans.filter(function (b) { return b.brand === n; }).length;
+      return { v: n, label: n + " " + c };
+    }));
+    chips("chips-brand", brandOpts, "brand");
+    chips("chips-form", forms.map(function (f) { return { v: f, label: f }; }), "form");
+    document.getElementById("note").textContent = "별은 마켓컬리 후기 수 기준의 인기 지표이며 맛 평가가 아닙니다 · " + UPDATED + " 확인";
+    renderBeans();
+  }
+
+  // ---- hero slider ----
+  var slideIdx = 0, slideTimer = null, slideCount = 0;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function go(n) {
+    if (!slideCount) return;
+    slideIdx = (n + slideCount) % slideCount;
+    document.getElementById("track").style.transform = "translateX(-" + (slideIdx * 100) + "%)";
+    Array.prototype.forEach.call(document.querySelectorAll(".slide"), function (el, i) {
+      if (i === slideIdx) el.removeAttribute("aria-hidden"); else el.setAttribute("aria-hidden", "true");
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".sdot"), function (el, i) {
+      el.setAttribute("aria-current", i === slideIdx ? "true" : "false");
+    });
+  }
+  function startSlide() { if (reduce || slideCount < 2 || slideTimer) return; slideTimer = setInterval(function () { go(slideIdx + 1); }, 5000); }
+  function stopSlide() { clearInterval(slideTimer); slideTimer = null; }
+
+  function buildSlider() {
+    var feat = beans.filter(function (b) { return b.featured; });
+    if (!feat.length) feat = beans.slice(0, 5);
+    slideCount = feat.length;
+    document.getElementById("track").innerHTML = feat.map(function (b, i) {
+      var rv = b.reviews == null ? "정보 없음" : "마켓컬리 후기 " + b.reviews.toLocaleString("ko-KR") + "건";
+      return '<div class="slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' / ' + feat.length + '"' + (i ? ' aria-hidden="true"' : '') + '>' +
+        '<div class="sheet"><div class="head"><small>Sample Sheet</small>' + esc(b.name) + '</div>' +
+        '<div class="row"><span>브랜드</span><span>' + esc(b.brand) + '</span></div>' +
+        '<div class="row"><span>형태</span><span>' + esc(b.form) + ' ' + esc(b.size) + '</span></div>' +
+        '<div class="row"><span>로스팅</span><span>' + (b.roast > 0 ? esc(b.roastLabel) : "미표기") + '</span></div>' +
+        '<div class="row"><span>컵 노트</span><span>' + esc(b.notes) + '</span></div>' +
+        '<div class="row"><span>후기</span><span>' + esc(rv) + '</span></div></div></div>';
+    }).join("");
+    document.getElementById("sdots").innerHTML = feat.map(function (b, i) {
+      return '<button type="button" class="sdot" data-i="' + i + '" aria-label="' + (i + 1) + '번째 샘플 보기" aria-current="' + (i === 0) + '"><span></span></button>';
+    }).join("");
+    document.getElementById("sdots").onclick = function (e) {
+      var d = e.target.closest("button");
+      if (!d) return;
+      go(parseInt(d.getAttribute("data-i"), 10));
+      stopSlide(); startSlide();
+    };
+    var sl = document.getElementById("slider");
+    sl.addEventListener("mouseenter", stopSlide);
+    sl.addEventListener("mouseleave", startSlide);
+    sl.addEventListener("focusin", stopSlide);
+    sl.addEventListener("focusout", startSlide);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) stopSlide(); else startSlide(); });
+    go(0);
+    startSlide();
+  }
+
+  fetch("products.json", { cache: "no-cache" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) {
+      brands = d.brands || [];
+      forms = ["전체"].concat(d.forms || []);
+      UPDATED = d.updated || "";
+      beans = (d.items || []).map(function (b, i) { b.i = i; return b; });
+      initList();
+      buildSlider();
+    })
+    .catch(function () {
+      document.getElementById("beans").innerHTML = '<p class="empty">상품 데이터(products.json)를 불러오지 못했습니다. 파일을 컴퓨터에서 직접 열었다면 배포된 주소에서 확인해 주세요.</p>';
+      document.getElementById("count").textContent = "";
+    });
+
+  renderGear(); renderRatio(); calc();
   document.getElementById("beanG").addEventListener("input", calc);
 })();
 </script>
