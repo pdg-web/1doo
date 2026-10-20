@@ -1,14 +1,22 @@
 {
   "_readme": [
-    "items 배열의 한 항목이 상품 하나입니다. 항목을 복사해 붙이면 상품이 추가되고, 항목을 지우면 사라집니다.",
-    "brand: 브랜드 이름 (brands 목록에 없으면 새 브랜드 탭이 자동으로 생기지 않으니 brands에도 추가하세요).",
-    "form: 원두, 드립백, 캡슐, 콜드브루, 디카페인 중 하나 (새 형태를 쓰면 forms에도 추가).",
-    "roast: 로스팅 단계 1(라이트)~5(다크), 모르면 0. roastLabel: 화면에 보일 로스팅 문구.",
-    "reviews: 판매처 후기 수 (모르면 null). stars: 추천 별 개수 1~5를 직접 정하려면 숫자를, 후기 수로 자동 계산하려면 null.",
-    "url: 구매 링크. 비워 두면 네이버 쇼핑 검색 결과로 연결됩니다. https:// 로 시작하는 주소만 사용됩니다.",
+    "이 파일(products.json)만 고치면 홈, 브랜드별 페이지, 원두별 페이지가 모두 자동으로 다시 만들어집니다. 저장하고 1~3분 기다리면 사이트에 반영됩니다.",
+    "쉼표(,)와 따옴표(\"), 중괄호({ })를 지우지 않게 주의하세요. 형식이 틀리면 사이트가 갱신되지 않고 GitHub의 Actions 탭에 오류가 표시됩니다.",
+    "site.url: 사이트 주소입니다. 나중에 .com 도메인을 연결하면 이 주소를 새 도메인으로 바꾸세요. 맨 끝에 /를 붙이지 않습니다.",
+    "brands: name은 상품의 brand와 똑같이 써야 합니다. slug는 주소에 쓰이는 영문 소문자/숫자/하이픈이며 한번 정하면 바꾸지 않는 것이 좋습니다. intro는 브랜드 페이지에 보일 소개 글(선택)입니다.",
+    "items: 상품 하나입니다. 항목을 복사해 붙이면 상품이 추가되고, 지우면 사라집니다. slug는 상품 주소(예: fritz-old-dog)이며 다른 상품과 겹치면 안 됩니다.",
+    "form: 원두, 드립백, 캡슐, 콜드브루, 디카페인 중 하나입니다. 새 형태를 쓰려면 forms에도 추가하세요.",
+    "roast: 로스팅 단계 1(라이트)~5(다크), 모르면 0. roastLabel: 화면에 보일 문구입니다.",
+    "reviews: 판매처 후기 수입니다(모르면 null). stars: 추천 별 1~5를 직접 정하려면 숫자를, 후기 수로 자동 계산하려면 null을 씁니다.",
+    "url: 구매 링크입니다. 비워 두면 네이버 쇼핑 검색 결과로 연결됩니다. https:// 로 시작하는 주소만 사용됩니다.",
+    "description: 상품 페이지 첫 문단에 보일 설명(선택)입니다. 직접 쓴 설명이 있으면 검색에도 도움이 됩니다.",
     "featured: true인 상품이 첫 화면 슬라이드에 나옵니다."
   ],
   "updated": "2026-10-20",
+  "site": {
+    "name": "원두노트",
+    "url": "https://pdg-web.github.io/1doo"
+  },
   "forms": [
     "원두",
     "드립백",
@@ -17,17 +25,80 @@
     "디카페인"
   ],
   "brands": [
-    "커피리브레",
-    "모모스커피",
-    "프릳츠",
-    "나무사이로",
-    "센터커피",
-    "테라로사",
-    "앤트러사이트",
-    "빈브라더스"
+    {
+      "name": "커피리브레",
+      "slug": "coffee-libre",
+      "intro": ""
+    },
+    {
+      "name": "모모스커피",
+      "slug": "momos-coffee",
+      "intro": ""
+    },
+    {
+      "name": "프릳츠",
+      "slug": "fritz",
+      "intro": ""
+    },
+    {
+      "name": "나무사이로",
+      "slug": "namusairo",
+      "intro": ""
+    },
+    {
+      "name": "센터커피",
+      "slug": "center-coffee",
+      "intro": ""
+    },
+    {
+      "name": "테라로사",
+      "slug": "terarosa",
+      "intro": ""
+    },
+    {
+      "name": "앤트러사이트",
+      "slug": "anthracite",
+      "intro": ""
+    },
+    {
+      "name": "빈브라더스",
+      "slug": "bean-brothers",
+      "intro": ""
+    }
+  ],
+  "gear": [
+    {
+      "name": "핸드 그라인더",
+      "point": "분쇄도 조절이 세밀한지 확인하세요.",
+      "text": "조절 단계가 촘촘하면 같은 원두도 맛을 맞추기 쉽습니다.",
+      "query": "핸드 그라인더 커피",
+      "url": ""
+    },
+    {
+      "name": "드리퍼와 필터",
+      "point": "필터 규격이 맞는지 봅니다.",
+      "text": "원뿔형은 물이 빠르게 내려 산뜻하고, 사다리꼴형은 느리게 내려 부드럽습니다.",
+      "query": "커피 드리퍼",
+      "url": ""
+    },
+    {
+      "name": "전자저울",
+      "point": "0.1g 단위와 타이머가 있으면",
+      "text": "원두와 물을 같은 기준으로 재현할 수 있습니다.",
+      "query": "커피 전자저울 타이머",
+      "url": ""
+    },
+    {
+      "name": "드립 케틀",
+      "point": "가는 주둥이(구스넥)가",
+      "text": "물줄기를 조절하기 쉽습니다. 온도 조절 기능은 선택 사항입니다.",
+      "query": "드립 케틀 구스넥",
+      "url": ""
+    }
   ],
   "items": [
     {
+      "slug": "libre-bad-blood",
       "brand": "커피리브레",
       "name": "배드 블러드",
       "form": "원두",
@@ -38,9 +109,11 @@
       "reviews": 5229,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "libre-no-surprise",
       "brand": "커피리브레",
       "name": "노 서프라이즈",
       "form": "원두",
@@ -51,9 +124,11 @@
       "reviews": 5229,
       "stars": null,
       "url": "",
-      "featured": true
+      "featured": true,
+      "description": ""
     },
     {
+      "slug": "libre-dark-libre",
       "brand": "커피리브레",
       "name": "다크 리브레",
       "form": "원두",
@@ -64,9 +139,11 @@
       "reviews": 5229,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "momos-purple-aroma",
       "brand": "모모스커피",
       "name": "보랏빛 향기 블렌드",
       "form": "원두",
@@ -77,9 +154,11 @@
       "reviews": 248,
       "stars": null,
       "url": "",
-      "featured": true
+      "featured": true,
+      "description": ""
     },
     {
+      "slug": "momos-s-chocolat",
       "brand": "모모스커피",
       "name": "에스 쇼콜라 블렌드",
       "form": "드립백",
@@ -90,9 +169,11 @@
       "reviews": 5939,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "momos-busan",
       "brand": "모모스커피",
       "name": "부산 블렌드",
       "form": "드립백",
@@ -103,9 +184,11 @@
       "reviews": 5939,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "momos-fruity-bonbon",
       "brand": "모모스커피",
       "name": "프루티 봉봉 블렌드",
       "form": "드립백",
@@ -116,9 +199,11 @@
       "reviews": 5939,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "momos-mchoberry",
       "brand": "모모스커피",
       "name": "므쵸베리 블렌드",
       "form": "드립백",
@@ -129,9 +214,11 @@
       "reviews": 5939,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "momos-ethiopia-single",
       "brand": "모모스커피",
       "name": "에티오피아 싱글오리진",
       "form": "드립백",
@@ -142,9 +229,11 @@
       "reviews": 5939,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "fritz-old-dog",
       "brand": "프릳츠",
       "name": "올드독 블렌드",
       "form": "원두",
@@ -155,9 +244,11 @@
       "reviews": 6615,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "fritz-seoul-cinema",
       "brand": "프릳츠",
       "name": "서울 시네마 블렌드",
       "form": "원두",
@@ -168,9 +259,11 @@
       "reviews": 6615,
       "stars": null,
       "url": "",
-      "featured": true
+      "featured": true,
+      "description": ""
     },
     {
+      "slug": "fritz-jal-doeeo-gasina",
       "brand": "프릳츠",
       "name": "잘 되어 가시나 블렌드",
       "form": "원두",
@@ -181,9 +274,11 @@
       "reviews": 6615,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "namusairo-waikan",
       "brand": "나무사이로",
       "name": "와이칸",
       "form": "원두",
@@ -194,9 +289,11 @@
       "reviews": 5380,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "namusairo-brilly",
       "brand": "나무사이로",
       "name": "브릴리",
       "form": "원두",
@@ -207,9 +304,11 @@
       "reviews": 5380,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "namusairo-singing-bird",
       "brand": "나무사이로",
       "name": "노래하는 새",
       "form": "원두",
@@ -220,9 +319,11 @@
       "reviews": 5380,
       "stars": null,
       "url": "",
-      "featured": true
+      "featured": true,
+      "description": ""
     },
     {
+      "slug": "center-icebreaker",
       "brand": "센터커피",
       "name": "아이스브레이커",
       "form": "드립백",
@@ -233,9 +334,11 @@
       "reviews": 1267,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "center-mayday",
       "brand": "센터커피",
       "name": "메이데이",
       "form": "드립백",
@@ -246,9 +349,11 @@
       "reviews": 1267,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "center-ethiopia-yirgacheffe-aricha",
       "brand": "센터커피",
       "name": "에티오피아 예가체프 아리차 워시드",
       "form": "드립백",
@@ -259,9 +364,11 @@
       "reviews": 1267,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "center-colombia-mujeres-tolima",
       "brand": "센터커피",
       "name": "콜롬비아 무헤레스 톨리만 워시드",
       "form": "드립백",
@@ -272,9 +379,11 @@
       "reviews": 1267,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "center-brazil-santa-ines",
       "brand": "센터커피",
       "name": "브라질 파젠다 산타 이네스 내추럴",
       "form": "드립백",
@@ -285,9 +394,11 @@
       "reviews": 1267,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "center-friday-capsule",
       "brand": "센터커피",
       "name": "프라이데이 커피 캡슐",
       "form": "캡슐",
@@ -298,9 +409,11 @@
       "reviews": 488,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "center-geisha-cold-brew",
       "brand": "센터커피",
       "name": "게이샤 콜드브루",
       "form": "콜드브루",
@@ -311,9 +424,11 @@
       "reviews": 2031,
       "stars": null,
       "url": "",
-      "featured": true
+      "featured": true,
+      "description": ""
     },
     {
+      "slug": "center-decaf-drip-bag",
       "brand": "센터커피",
       "name": "디카페인 드립백",
       "form": "디카페인",
@@ -324,9 +439,11 @@
       "reviews": null,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "terarosa-dawn-berry",
       "brand": "테라로사",
       "name": "던 베리 블렌드",
       "form": "원두",
@@ -337,9 +454,11 @@
       "reviews": 144,
       "stars": null,
       "url": "",
-      "featured": true
+      "featured": true,
+      "description": ""
     },
     {
+      "slug": "terarosa-gangneung",
       "brand": "테라로사",
       "name": "강릉 블렌드",
       "form": "원두",
@@ -350,9 +469,11 @@
       "reviews": 247,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "terarosa-authentic-espresso",
       "brand": "테라로사",
       "name": "어센틱 에스프레소 블렌드",
       "form": "원두",
@@ -363,9 +484,11 @@
       "reviews": 247,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "terarosa-house-drip",
       "brand": "테라로사",
       "name": "하우스 드립 블렌드",
       "form": "원두",
@@ -376,9 +499,11 @@
       "reviews": 247,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "anthracite-butter-fatrio",
       "brand": "앤트러사이트",
       "name": "버터 팻트리오",
       "form": "원두",
@@ -389,9 +514,11 @@
       "reviews": 4068,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "anthracite-history-mystery",
       "brand": "앤트러사이트",
       "name": "히스토리 미스터리",
       "form": "원두",
@@ -402,9 +529,11 @@
       "reviews": 4068,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "anthracite-william-blake",
       "brand": "앤트러사이트",
       "name": "윌리엄 블레이크",
       "form": "원두",
@@ -415,9 +544,11 @@
       "reviews": 4068,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "bean-brothers-toast",
       "brand": "빈브라더스",
       "name": "토스트",
       "form": "원두",
@@ -428,9 +559,11 @@
       "reviews": 3057,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "bean-brothers-decaf",
       "brand": "빈브라더스",
       "name": "디카페인",
       "form": "디카페인",
@@ -441,9 +574,11 @@
       "reviews": 78,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "bean-brothers-cold-brew-velvet-white",
       "brand": "빈브라더스",
       "name": "콜드브루 벨벳 화이트",
       "form": "콜드브루",
@@ -454,9 +589,11 @@
       "reviews": 5938,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     },
     {
+      "slug": "bean-brothers-cold-brew-black-suit",
       "brand": "빈브라더스",
       "name": "콜드브루 블랙 수트",
       "form": "콜드브루",
@@ -467,7 +604,8 @@
       "reviews": 5938,
       "stars": null,
       "url": "",
-      "featured": false
+      "featured": false,
+      "description": ""
     }
   ]
 }
