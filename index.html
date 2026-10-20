@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>원두노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 좌측 정렬 에디토리얼 그리드. 헤어라인으로 구획하고 카드는 쓰지 않는다. */
+:root {
+  --bg: #F2F2EF;
+  --surface: #FAFAF8;
+  --fg: #161616;
+  --muted: #66665F;
+  --line: #D8D8D1;
+  --accent: #A8322D;
+  --on-accent: #FFFFFF;
+  --font-display: "Manrope", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121211; --surface: #1A1A18; --fg: #EDEDE8; --muted: #9B9B93;
+    --line: #2F2F2B; --accent: #E2675F; --on-accent: #161616;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121211; --surface: #1A1A18; --fg: #EDEDE8; --muted: #9B9B93;
+  --line: #2F2F2B; --accent: #E2675F; --on-accent: #161616;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  padding-block: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* header */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+.brand i { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); display: inline-block; }
+.nav { display: flex; gap: 22px; font-size: 0.9rem; color: var(--muted); }
+.nav a { text-decoration: none; }
+.nav a:hover { color: var(--fg); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; padding-block: 56px 72px; border-top: 1px solid var(--line); align-items: end; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.3rem, 6.4vw, 4.4rem); line-height: 1.12; letter-spacing: -0.035em; margin: 0 0 24px; text-wrap: balance; word-break: keep-all; }
+.lead { color: var(--muted); max-width: 34em; margin: 0 0 32px; word-break: keep-all; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { font: inherit; font-weight: 500; font-size: 0.95rem; padding: 12px 20px; border-radius: 4px; border: 1px solid var(--fg); background: var(--fg); color: var(--bg); text-decoration: none; cursor: pointer; display: inline-block; line-height: 1.3; }
+.btn.ghost { background: transparent; color: var(--fg); }
+.btn:hover { opacity: 0.86; }
+
+.sheet { font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; border-top: 2px solid var(--fg); }
+.sheet .row { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.sheet .row span:first-child { color: var(--muted); }
+.sheet .row span:last-child { text-align: right; min-width: 0; }
+.sheet .head { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; padding: 14px 0 12px; border-bottom: 1px solid var(--line); }
+.sheet .head small { display: block; font-family: var(--font-mono); font-weight: 400; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* sections */
+section { padding-block: 64px; border-top: 1px solid var(--line); scroll-margin-top: 8px; }
+.sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 48px; margin-bottom: 36px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 3.6vw, 2.2rem); line-height: 1.25; letter-spacing: -0.03em; margin: 0; text-wrap: balance; word-break: keep-all; }
+.sec-head p.desc { color: var(--muted); margin: 0; max-width: 38em; word-break: keep-all; align-self: end; }
+
+/* finder */
+.filters { display: grid; gap: 14px; margin-bottom: 28px; }
+.fgroup { display: flex; gap: 8px 14px; align-items: center; flex-wrap: wrap; }
+.flabel { font-family: var(--font-body); font-size: 0.8rem; color: var(--muted); width: 52px; flex: none; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font: inherit; font-size: 0.88rem; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; line-height: 1.5; }
+.chip:hover { border-color: var(--fg); }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+.list { border-top: 2px solid var(--fg); }
+.item { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) 150px auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.item h3 { font-family: var(--font-display); font-size: 1.08rem; font-weight: 700; letter-spacing: -0.02em; margin: 0; word-break: keep-all; }
+.item .sub { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; margin-top: 2px; }
+.item .notes { margin: 0; word-break: keep-all; }
+.item .notes small { display: block; color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+.roast { display: flex; flex-direction: column; gap: 6px; font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+.dots { display: flex; gap: 4px; }
+.dots b { width: 14px; height: 6px; border-radius: 1px; background: var(--line); display: block; }
+.dots b.on { background: var(--accent); }
+.go { font-size: 0.88rem; font-weight: 500; text-decoration: none; border-bottom: 1px solid var(--fg); padding-bottom: 1px; white-space: nowrap; }
+.go:hover { color: var(--accent); border-color: var(--accent); }
+.rating { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); flex-wrap: wrap; }
+.stars { display: inline-flex; letter-spacing: 1px; font-size: 0.82rem; line-height: 1; }
+.stars .on { color: var(--accent); }
+.stars .off { color: var(--line); }
+.empty { padding: 28px 0; color: var(--muted); border-bottom: 1px solid var(--line); }
+.count { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); margin: 0 0 10px; }
+
+/* gear */
+.gear { border-top: 2px solid var(--fg); }
+.gear .item { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.8fr) auto; }
+.gear .check { font-size: 0.9rem; color: var(--muted); margin: 0; word-break: keep-all; }
+.gear .check b { color: var(--fg); font-weight: 500; }
+
+/* ratio */
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+.field { display: grid; gap: 8px; margin-bottom: 22px; }
+.field label, .field .lbl { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--muted); }
+.field input[type="number"] { font: inherit; font-family: var(--font-mono); font-size: 1.4rem; width: 160px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--fg); }
+.out { border-top: 2px solid var(--fg); padding-top: 18px; }
+.out .big { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.6rem, 7vw, 4rem); letter-spacing: -0.04em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.out .big span { font-size: 1.2rem; font-weight: 500; color: var(--muted); margin-left: 6px; letter-spacing: 0; }
+.out ul { list-style: none; padding: 0; margin: 20px 0 0; font-family: var(--font-mono); font-size: 0.82rem; }
+.out li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.out li span:first-child { color: var(--muted); }
+
+/* footer */
+footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 48px; color: var(--muted); font-size: 0.85rem; }
+footer p { margin: 0; max-width: 42em; word-break: keep-all; }
+
+@media (max-width: 820px) {
+  .hero, .sec-head, .calc, footer { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .hero { padding-block: 36px 48px; }
+  section { padding-block: 48px; }
+  .item { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; }
+  .item .notes { grid-column: 1 / -1; order: 3; }
+  .item .roast { grid-column: 1 / 2; order: 4; }
+  .item .go { grid-column: 2 / 3; grid-row: 1; align-self: start; }
+  .gear .item { grid-template-columns: minmax(0, 1fr) auto; }
+  .gear .item .check { grid-column: 1 / -1; order: 3; }
+  .nav { gap: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .chip, .btn, .go { transition: background-color .15s, color .15s, border-color .15s, opacity .15s; }
+}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top"><i></i>원두노트</a>
+    <nav class="nav" aria-label="섹션 이동">
+      <a href="#finder">브랜드별 원두</a>
+      <a href="#gear">커피용품</a>
+      <a href="#ratio">추출 비율</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div>
+        <h1>원두는 취향대로,<br>구매는 가장 쉬운 길로.</h1>
+        <p class="lead">원산지와 로스팅, 추출 방식까지 비교해 보고, 마음에 드는 원두와 커피용품은 구매처로 바로 연결해 드립니다. 원두노트는 직접 판매하지 않고 고르는 과정만 돕습니다.</p>
+        <div class="actions">
+          <a class="btn" href="#finder">브랜드별 원두 보기</a>
+          <a class="btn ghost" href="#ratio">추출 비율 계산</a>
+        </div>
+      </div>
+      <div class="sheet" aria-label="원두 정보 예시">
+        <div class="head"><small>Sample Sheet</small>서울 시네마 블렌드</div>
+        <div class="row"><span>브랜드</span><span>프릳츠</span></div>
+        <div class="row"><span>로스팅</span><span>라이트</span></div>
+        <div class="row"><span>컵 노트</span><span>자두 · 라즈베리 · 레몬 껍질</span></div>
+        <div class="row"><span>용량</span><span>원두 200g</span></div>
+        <div class="row"><span>추천 추출</span><span>핸드드립 1:16</span></div>
+      </div>
+    </div>
+
+    <section id="finder">
+      <div class="sec-head">
+        <div><p class="eyebrow">Beans by Brand</p><h2>브랜드별 원두</h2></div>
+        <p class="desc">온라인 판매로 알려진 6개 로스터리의 원두, 드립백, 캡슐, 콜드브루를 브랜드별로 모았습니다. 추천 별은 마켓컬리 후기 수로 정한 인기 지표이고 맛 평가가 아닙니다. 후기는 묶음 상품 단위라 같은 묶음의 상품은 별이 같습니다. 정보는 2026년 10월 20일 기준입니다.</p>
+      </div>
+      <div class="filters">
+        <div class="fgroup"><span class="flabel">브랜드</span><div class="chips" id="chips-brand"></div></div>
+        <div class="fgroup"><span class="flabel">형태</span><div class="chips" id="chips-form"></div></div>
+      </div>
+      <p class="count" id="count" aria-live="polite"></p>
+      <div class="list" id="beans"></div>
+    </section>
+
+    <section id="gear">
+      <div class="sec-head">
+        <div><p class="eyebrow">Gear</p><h2>처음 갖출 커피용품</h2></div>
+        <p class="desc">집에서 핸드드립을 시작할 때 맛 차이를 만드는 순서대로 정리했습니다. 구매 전에 확인할 점만 짚었습니다.</p>
+      </div>
+      <div class="gear list" id="gearList"></div>
+    </section>
+
+    <section id="ratio">
+      <div class="sec-head">
+        <div><p class="eyebrow">Brew Ratio</p><h2>추출 비율 계산</h2></div>
+        <p class="desc">원두 양과 비율을 정하면 필요한 물의 양이 나옵니다. 1:15는 진하게, 1:17은 가볍게 마시는 쪽입니다.</p>
+      </div>
+      <div class="calc">
+        <div>
+          <div class="field">
+            <label for="beanG">원두 (g)</label>
+            <input id="beanG" type="number" inputmode="decimal" min="1" max="200" step="0.5" value="20">
+          </div>
+          <div class="field">
+            <span class="lbl" id="ratioLbl">비율 (원두 : 물)</span>
+            <div class="chips" role="group" aria-labelledby="ratioLbl" id="ratioChips"></div>
+          </div>
+        </div>
+        <div class="out" aria-live="polite">
+          <div class="big"><b id="waterOut">320</b><span>ml 물</span></div>
+          <ul>
+            <li><span>비율</span><span id="ratioOut">1 : 16</span></li>
+            <li><span>추출 후 예상 양</span><span id="cupOut">약 280 ml</span></li>
+            <li><span>목표 추출 시간</span><span>2:30 – 3:30</span></li>
+            <li><span>물 온도</span><span>90 – 96 °C</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <strong style="color:var(--fg);font-family:var(--font-display);">원두노트</strong>
+    <p>원두노트는 제품을 직접 판매하지 않으며 외부 구매처로 연결하는 정보 서비스입니다. 가격, 재고, 배송과 교환은 각 구매처의 정책을 따릅니다. 상품 구성과 맛 설명은 판매처 정보를 참고한 것으로 시기에 따라 바뀔 수 있습니다.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var SHOP = "https://search.shopping.naver.com/search/all?query=";
+  function buy(q) { return SHOP + encodeURIComponent(q); }
+
+  var brands = ["커피리브레", "모모스커피", "프릳츠", "나무사이로", "센터커피", "테라로사"];
+  // rv: 해당 상품이 속한 마켓컬리 묶음 상품 페이지의 후기 수 (2026-10-20 확인). null은 확인하지 못한 경우.
+  var beans = [
+    { brand: "커피리브레", name: "배드 블러드", notes: "과일 시럽 같은 단맛", roast: 2, roastLabel: "중약배전", form: "원두", size: "200g", rv: 5229 },
+    { brand: "커피리브레", name: "노 서프라이즈", notes: "농밀한 과일의 단맛", roast: 3, roastLabel: "중배전", form: "원두", size: "200g", rv: 5229 },
+    { brand: "커피리브레", name: "다크 리브레", notes: "다크 초콜릿, 견과의 고소함", roast: 5, roastLabel: "강배전", form: "원두", size: "200g", rv: 5229 },
+
+    { brand: "모모스커피", name: "보랏빛 향기 블렌드", notes: "라벤더, 포도, 자두주스, 카카오", roast: 2, roastLabel: "미디엄 라이트", form: "원두", size: "200g", rv: 248 },
+    { brand: "모모스커피", name: "에스 쇼콜라 블렌드", notes: "카카오, 헤이즐넛, 크리미한 질감", roast: 5, roastLabel: "강배전", form: "드립백", size: "10g x 7개", rv: 5939 },
+    { brand: "모모스커피", name: "부산 블렌드", notes: "구운 피칸, 캐러멜 단맛, 약한 산미", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 5939 },
+    { brand: "모모스커피", name: "프루티 봉봉 블렌드", notes: "오렌지, 시트러스, 캐러멜 단맛", roast: 0, roastLabel: "", form: "드립백", size: "12g x 7개", rv: 5939 },
+    { brand: "모모스커피", name: "므쵸베리 블렌드", notes: "베리류, 초콜릿 같은 묵직한 단맛", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 5939 },
+    { brand: "모모스커피", name: "에티오피아 싱글오리진", notes: "장미, 블루베리, 카카오닙스", roast: 0, roastLabel: "", form: "드립백", size: "12g x 7개", rv: 5939 },
+
+    { brand: "프릳츠", name: "올드독 블렌드", notes: "다크 초콜릿, 흑설탕, 구운 피칸", roast: 5, roastLabel: "강배전", form: "원두", size: "200g", rv: 6615 },
+    { brand: "프릳츠", name: "서울 시네마 블렌드", notes: "자두, 라즈베리, 레몬 껍질, 아쌈 티", roast: 1, roastLabel: "라이트", form: "원두", size: "200g", rv: 6615 },
+    { brand: "프릳츠", name: "잘 되어 가시나 블렌드", notes: "말린 과일, 캐러멜, 유자 마멀레이드", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 6615 },
+
+    { brand: "나무사이로", name: "와이칸", notes: "바닐라, 베리, 깨끗하고 긴 여운", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 5380 },
+    { brand: "나무사이로", name: "브릴리", notes: "건과일, 고소한 견과류, 향신료, 누룽지 사탕", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 5380 },
+    { brand: "나무사이로", name: "노래하는 새", notes: "자스민, 파인애플, 딸기, 자두", roast: 0, roastLabel: "", form: "원두", size: "200g", rv: 5380 },
+
+    { brand: "센터커피", name: "아이스브레이커", notes: "사과, 자두, 마카다미아", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
+    { brand: "센터커피", name: "메이데이", notes: "복합적인 과일 풍미, 카라멜", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
+    { brand: "센터커피", name: "에티오피아 예가체프 아리차 워시드", notes: "탠저린, 레몬그라스, 아몬드", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
+    { brand: "센터커피", name: "콜롬비아 무헤레스 톨리만 워시드", notes: "포도, 체리, 다크 초콜릿", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
+    { brand: "센터커피", name: "브라질 파젠다 산타 이네스 내추럴", notes: "오렌지, 마카다미아, 밀크 초콜릿", roast: 0, roastLabel: "", form: "드립백", size: "10g x 7개", rv: 1267 },
+    { brand: "센터커피", name: "프라이데이 커피 캡슐", notes: "체리, 무화과, 흑설탕 (네스프레소 호환)", roast: 0, roastLabel: "", form: "캡슐", size: "10개입", rv: 488 },
+    { brand: "센터커피", name: "게이샤 콜드브루", notes: "살구, 청사과 산미, 밀크 초콜릿의 단맛", roast: 0, roastLabel: "", form: "콜드브루", size: "200mL", rv: 2031 },
+    { brand: "센터커피", name: "디카페인 드립백", notes: "맛 설명 미표기", roast: 0, roastLabel: "", form: "디카페인", size: "10g x 7개", rv: null },
+
+    { brand: "테라로사", name: "던 베리 블렌드", notes: "자두와 베리, 초콜릿의 단맛", roast: 1, roastLabel: "약배전", form: "원두", size: "250g / 500g", rv: 144 },
+    { brand: "테라로사", name: "강릉 블렌드", notes: "과일 같은 단맛과 산미, 쌉쌀하고 부드러운 향", roast: 0, roastLabel: "", form: "원두", size: "250g", rv: 247 },
+    { brand: "테라로사", name: "어센틱 에스프레소 블렌드", notes: "사과 같은 상큼함, 달콤한 캐러멜", roast: 0, roastLabel: "", form: "원두", size: "250g", rv: 247 },
+    { brand: "테라로사", name: "하우스 드립 블렌드", notes: "과일의 단맛, 고소한 견과류, 깊은 향", roast: 0, roastLabel: "", form: "원두", size: "250g", rv: 247 }
+  ];
+  beans.forEach(function (b, i) { b.i = i; });
+  // 추천 별: 후기 수 기준 인기 지표 (5,000건 이상 5개, 2,000건 4개, 1,000건 3개, 400건 2개, 그 미만 1개)
+  function stars(rv) { if (rv == null) return 0; return rv >= 5000 ? 5 : rv >= 2000 ? 4 : rv >= 1000 ? 3 : rv >= 400 ? 2 : 1; }
+
+  var gear = [
+    { name: "핸드 그라인더", check: "<b>분쇄도 조절이 세밀한지</b> 확인하세요. 조절 단계가 촘촘하면 같은 원두도 맛을 맞추기 쉽습니다.", q: "핸드 그라인더 커피" },
+    { name: "드리퍼와 필터", check: "<b>필터 규격이 맞는지</b> 봅니다. 원뿔형은 물이 빠르게 내려 산뜻하고, 사다리꼴형은 느리게 내려 부드럽습니다.", q: "커피 드리퍼" },
+    { name: "전자저울", check: "<b>0.1g 단위와 타이머</b>가 있으면 원두와 물을 같은 기준으로 재현할 수 있습니다.", q: "커피 전자저울 타이머" },
+    { name: "드립 케틀", check: "<b>가는 주둥이(구스넥)</b>가 물줄기를 조절하기 쉽습니다. 온도 조절 기능은 선택 사항입니다.", q: "드립 케틀 구스넥" }
+  ];
+
+  var state = { brand: "전체", form: "전체" };
+  var forms = ["전체", "원두", "드립백", "캡슐", "콜드브루", "디카페인"];
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function chips(id, arr, key) {
+    var el = document.getElementById(id);
+    el.innerHTML = arr.map(function (o) {
+      return '<button type="button" class="chip" data-v="' + esc(o.v) + '" aria-pressed="' + (state[key] === o.v) + '">' + esc(o.label) + "</button>";
+    }).join("");
+    el.onclick = function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      state[key] = b.getAttribute("data-v");
+      chips(id, arr, key);
+      renderBeans();
+    };
+  }
+
+  function renderBeans() {
+    var rows = beans.filter(function (b) {
+      return (state.brand === "전체" || b.brand === state.brand) &&
+             (state.form === "전체" || b.form === state.form);
+    });
+    rows.sort(function (x, y) { return ((y.rv == null ? -1 : y.rv) - (x.rv == null ? -1 : x.rv)) || (x.i - y.i); });
+    document.getElementById("count").textContent = rows.length + "개 상품 · 후기가 많은 순";
+    var box = document.getElementById("beans");
+    if (!rows.length) { box.innerHTML = '<p class="empty">이 브랜드는 선택한 형태의 상품이 아직 없습니다. 형태를 \u0027전체\u0027로 바꿔 보세요.</p>'; return; }
+    box.innerHTML = rows.map(function (b) {
+      var roast;
+      if (b.roast > 0) {
+        var dots = "";
+        for (var i = 1; i <= 5; i++) dots += '<b class="' + (i <= b.roast ? "on" : "") + '"></b>';
+        roast = '<div class="dots" aria-hidden="true">' + dots + '</div><span>' + esc(b.roastLabel) + '</span>';
+      } else {
+        roast = '<span>로스팅 미표기</span>';
+      }
+      var n = stars(b.rv), st = "";
+      for (var k = 1; k <= 5; k++) st += '<span class="' + (k <= n ? "on" : "off") + '">★</span>';
+      var rating = b.rv == null
+        ? '<div class="rating"><span class="stars" aria-hidden="true">' + st + '</span><span class="rv">후기 정보 없음</span></div>'
+        : '<div class="rating"><span class="stars" role="img" aria-label="추천 ' + n + '개 (5개 만점)">' + st + '</span><span class="rv">후기 ' + b.rv.toLocaleString("ko-KR") + '건</span></div>';
+      var q = b.brand + " " + b.name + (b.form === "원두" ? " 원두" : " " + b.form);
+      return '<article class="item">' +
+        '<div><h3>' + esc(b.name) + '</h3><div class="sub">' + esc(b.brand) + ' · ' + esc(b.form) + ' ' + esc(b.size) + '</div>' + rating + '</div>' +
+        '<p class="notes">' + esc(b.notes) + '</p>' +
+        '<div class="roast">' + roast + '</div>' +
+        '<a class="go" href="' + buy(q) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' +
+        '</article>';
+    }).join("");
+  }
+
+  function renderGear() {
+    document.getElementById("gearList").innerHTML = gear.map(function (g) {
+      return '<article class="item"><div><h3>' + esc(g.name) + '</h3></div><p class="check">' + g.check + '</p>' +
+        '<a class="go" href="' + buy(g.q) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a></article>';
+    }).join("");
+  }
+
+  var ratio = 16;
+  function calc() {
+    var g = parseFloat(document.getElementById("beanG").value);
+    if (!(g > 0)) g = 0;
+    var w = Math.round(g * ratio);
+    document.getElementById("waterOut").textContent = w;
+    document.getElementById("ratioOut").textContent = "1 : " + ratio;
+    document.getElementById("cupOut").textContent = "약 " + Math.max(0, Math.round(w - g * 2)) + " ml";
+  }
+  function renderRatio() {
+    var el = document.getElementById("ratioChips");
+    el.innerHTML = [15, 16, 17].map(function (r) {
+      return '<button type="button" class="chip" data-r="' + r + '" aria-pressed="' + (r === ratio) + '">1 : ' + r + "</button>";
+    }).join("");
+    el.onclick = function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      ratio = parseInt(b.getAttribute("data-r"), 10);
+      renderRatio(); calc();
+    };
+  }
+
+  var brandOpts = [{ v: "전체", label: "전체 " + beans.length }].concat(brands.map(function (n) {
+    var c = beans.filter(function (b) { return b.brand === n; }).length;
+    return { v: n, label: n + " " + c };
+  }));
+  chips("chips-brand", brandOpts, "brand");
+  chips("chips-form", forms.map(function (f) { return { v: f, label: f }; }), "form");
+  renderBeans(); renderGear(); renderRatio(); calc();
+  document.getElementById("beanG").addEventListener("input", calc);
+})();
+</script>
+
+</body>
+</html>
