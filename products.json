@@ -31,49 +31,49 @@
       "name": "커피리브레",
       "slug": "coffee-libre",
       "intro": "",
-      "logo": "coffee-libre.png"
+      "logo": "logos/coffee-libre.png"
     },
     {
       "name": "모모스커피",
       "slug": "momos-coffee",
       "intro": "",
-      "logo": "momos-coffee.png"
+      "logo": "logos/momos-coffee.png"
     },
     {
       "name": "프릳츠",
       "slug": "fritz",
       "intro": "",
-      "logo": "fritz.png"
+      "logo": "logos/fritz.png"
     },
     {
       "name": "나무사이로",
       "slug": "namusairo",
       "intro": "",
-      "logo": "namusairo.png"
+      "logo": "logos/namusairo.png"
     },
     {
       "name": "센터커피",
       "slug": "center-coffee",
       "intro": "",
-      "logo": "center-coffee.png"
+      "logo": "logos/center-coffee.png"
     },
     {
       "name": "테라로사",
       "slug": "terarosa",
       "intro": "",
-      "logo": "terarosa.png"
+      "logo": "logos/terarosa.png"
     },
     {
       "name": "앤트러사이트",
       "slug": "anthracite",
       "intro": "",
-      "logo": "anthracite.png"
+      "logo": "logos/anthracite.png"
     },
     {
       "name": "빈브라더스",
       "slug": "bean-brothers",
       "intro": "",
-      "logo": "bean-brothers.svg"
+      "logo": "logos/bean-brothers.svg"
     }
   ],
   "gear": [
