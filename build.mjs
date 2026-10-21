@@ -386,6 +386,13 @@ brands.forEach((b, i) => {
   brandByName.set(b.name, b);
   brandSlugs.add(b.slug);
   // 로고는 저장소 안의 이미지 파일 경로만 허용합니다. 예: logos/fritz.png (파일이 없으면 글자 배지로 대신 표시)
+  // logoBg: 로고 뒤 판의 색. 비우면 흰색, "dark" 는 어두운 색, 직접 지정하려면 #1c1b19 같은 색 코드를 씁니다.
+  b.logoBgCss = '';
+  if (b.logoBg && b.logoBg !== 'light') {
+    if (b.logoBg === 'dark') b.logoBgCss = '#1c1b19';
+    else if (/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(b.logoBg)) b.logoBgCss = b.logoBg;
+    else fail('브랜드 "' + b.name + '" 의 logoBg 는 비우거나 "dark", 또는 #1c1b19 같은 색 코드여야 합니다: ' + b.logoBg);
+  }
   b.logoPath = null;
   if (b.logo) {
     const lp = String(b.logo);
@@ -428,7 +435,7 @@ const beanUrl = it => '/beans/' + it.slug + '/';
 // 로고: 파일이 있으면 이미지, 없으면 브랜드 이름 첫 글자 배지. 다크 모드에서도 보이도록 밝은 판 위에 올립니다.
 function logoHtml(b, P, size, decorative) {
   if (b.logoPath) {
-    return '<span class="logo ' + size + '"><img src="' + P + esc(b.logoPath) + '" alt="' + (decorative ? '' : esc(b.name) + ' 로고') + '" loading="lazy" decoding="async"></span>';
+    return '<span class="logo ' + size + '"' + (b.logoBgCss ? ' style="background:' + b.logoBgCss + '"' : '') + '><img src="' + P + esc(b.logoPath) + '" alt="' + (decorative ? '' : esc(b.name) + ' 로고') + '" loading="lazy" decoding="async"></span>';
   }
   return '<span class="logo mono ' + size + '" aria-hidden="true">' + esc(Array.from(b.name)[0]) + '</span>';
 }
