@@ -15,7 +15,7 @@ const CSS = String.raw`/* 원두노트 스타일. 어두운 에스프레소 띠 
 :root {
   --bg: #FAF9F7; --surface: #F1EFEB; --fg: #17120F; --muted: #5F5750; --line: #E2DED7;
   --band: #1B130E; --band-fg: #F6EFE6; --band-muted: #BFB3A5; --band-line: #3A2D24;
-  --accent: #F2A93B; --on-accent: #17120F;
+  --brand-ink: #9A5B17; --accent: #F2A93B; --on-accent: #17120F;
   --r1: #E6BC78; --r2: #C98E41; --r3: #97622F; --r4: #5F3A22; --r5: #2A1A12;
   --on-r1: #17120F; --on-r2: #17120F; --on-r3: #FFFFFF; --on-r4: #FFFFFF; --on-r5: #FFFFFF;
   --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
@@ -23,14 +23,14 @@ const CSS = String.raw`/* 원두노트 스타일. 어두운 에스프레소 띠 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0F0B09; --surface: #18110D; --fg: #F4EDE4; --muted: #B3A699; --line: #2E241D;
-    --band: #1E1510;
+    --band: #1E1510; --brand-ink: #F2A93B;
     --r1: #EBC98A; --r2: #D39C52; --r3: #B07A47; --r4: #7A4E32; --r5: #4A3126;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0F0B09; --surface: #18110D; --fg: #F4EDE4; --muted: #B3A699; --line: #2E241D;
-  --band: #1E1510;
+  --band: #1E1510; --brand-ink: #F2A93B;
   --r1: #EBC98A; --r2: #D39C52; --r3: #B07A47; --r4: #7A4E32; --r5: #4A3126;
   color-scheme: dark;
 }
@@ -71,7 +71,7 @@ h1 { font-weight: 900; font-size: clamp(2.6rem, 6.2vw, 5rem); line-height: 1.12;
 .bsheet { border-top: 2px solid var(--band-fg); font-size: 0.88rem; line-height: 1.5; }
 .bsheet .head { display: flex; align-items: center; gap: 14px; padding: 14px 0 12px; border-bottom: 1px solid var(--band-line); }
 .bsheet .head small { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--band-muted); }
-.bsheet .head b { display: block; font-weight: 800; font-size: 0.95rem; }
+.bsheet .head b { color: var(--accent); display: block; font-weight: 800; font-size: 0.95rem; }
 .bsheet .head a { display: block; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; text-decoration: none; line-height: 1.3; }
 .bsheet .r { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--band-line); }
 .bsheet .r > span:first-child { color: var(--band-muted); flex: none; }
@@ -132,7 +132,7 @@ h2 { font-weight: 800; font-size: clamp(1.5rem, 3.4vw, 2.1rem); letter-spacing: 
 .open { grid-area: main; min-width: 0; display: flex; align-items: center; gap: 16px; text-decoration: none; }
 .open::after { content: ""; position: absolute; inset: 0; }
 .txt { min-width: 0; display: block; }
-.brandname { display: block; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; line-height: 1.3; }
+.brandname { color: var(--brand-ink); display: block; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; line-height: 1.3; }
 .beanname { display: block; font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; line-height: 1.3; word-break: keep-all; }
 .open:hover .beanname { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .meta { display: block; font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
@@ -214,7 +214,7 @@ h2 { font-weight: 800; font-size: clamp(1.5rem, 3.4vw, 2.1rem); letter-spacing: 
 
 .dpage { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; padding-block: 24px 48px; align-items: start; }
 .d-id { display: flex; align-items: center; gap: 22px; min-width: 0; margin-bottom: 22px; }
-.d-brand { display: block; font-weight: 800; font-size: 1.45rem; letter-spacing: -0.02em; line-height: 1.25; text-decoration: none; }
+.d-brand { color: var(--brand-ink); display: block; font-weight: 800; font-size: 1.45rem; letter-spacing: -0.02em; line-height: 1.25; text-decoration: none; }
 .d-brand:hover { text-decoration: underline; text-underline-offset: 3px; }
 .d-name { font-weight: 900; font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.03em; line-height: 1.2; margin: 0; word-break: keep-all; }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; }
