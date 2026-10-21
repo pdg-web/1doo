@@ -11,226 +11,264 @@ const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'products.json'), 'utf8'
 
 function fail(msg) { console.error('\n[products.json 오류] ' + msg + '\n'); process.exit(1); }
 
-const CSS = String.raw`/* 원두노트 스타일. 바탕은 차분한 중립색, 포인트는 로스팅 단계 5색(--r1~--r5). 붉은색은 쓰지 않는다. */
+const CSS = String.raw`/* 원두노트 스타일. 어두운 에스프레소 띠 위의 큰 타이포, 로스팅 5색 스펙트럼, 로고가 큰 목록. 포인트색은 호박색 하나. */
 :root {
-  --bg: #F3F2F0;
-  --surface: #FBFAF9;
-  --fg: #171615;
-  --muted: #6A6862;
-  --line: #DDDBD6;
-  --accent: #8B5A2B;
-  --r1: #D8B26A;
-  --r2: #B98A44;
-  --r3: #8D5E32;
-  --r4: #5F3B24;
-  --r5: #33201A;
+  --bg: #FAF9F7; --surface: #F1EFEB; --fg: #17120F; --muted: #5F5750; --line: #E2DED7;
+  --band: #1B130E; --band-fg: #F6EFE6; --band-muted: #BFB3A5; --band-line: #3A2D24;
+  --accent: #F2A93B; --on-accent: #17120F;
+  --r1: #E6BC78; --r2: #C98E41; --r3: #97622F; --r4: #5F3A22; --r5: #2A1A12;
+  --on-r1: #17120F; --on-r2: #17120F; --on-r3: #FFFFFF; --on-r4: #FFFFFF; --on-r5: #FFFFFF;
   --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #131211; --surface: #1B1A18; --fg: #EFEDE8; --muted: #9D9A92; --line: #2F2D2A; --accent: #D2A06B;
-    --r1: #E8C98A; --r2: #D0A15F; --r3: #B07A47; --r4: #8A5A3A; --r5: #6B4636;
+    --bg: #0F0B09; --surface: #18110D; --fg: #F4EDE4; --muted: #B3A699; --line: #2E241D;
+    --band: #1E1510;
+    --r1: #EBC98A; --r2: #D39C52; --r3: #B07A47; --r4: #7A4E32; --r5: #4A3126;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #131211; --surface: #1B1A18; --fg: #EFEDE8; --muted: #9D9A92; --line: #2F2D2A; --accent: #D2A06B;
-  --r1: #E8C98A; --r2: #D0A15F; --r3: #B07A47; --r4: #8A5A3A; --r5: #6B4636;
+  --bg: #0F0B09; --surface: #18110D; --fg: #F4EDE4; --muted: #B3A699; --line: #2E241D;
+  --band: #1E1510;
+  --r1: #EBC98A; --r2: #D39C52; --r3: #B07A47; --r4: #7A4E32; --r5: #4A3126;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font);
-  font-size: 16px;
-  line-height: 1.7;
-  font-variant-numeric: tabular-nums;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  -webkit-font-smoothing: antialiased;
-}
-.wrap { max-width: 1080px; margin: 0 auto; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+.in { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 a { color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+.band :focus-visible { outline-color: var(--accent); }
 [hidden] { display: none !important; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* 헤더 */
-.top { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; padding-block: 20px; flex-wrap: wrap; }
-.brand { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
-.brand i { width: 12px; height: 12px; border-radius: 50%; background: var(--r3); display: inline-block; }
-.nav { display: flex; gap: 22px; font-size: 0.92rem; color: var(--muted); flex-wrap: wrap; }
+/* 띠와 헤더 */
+.band { background: var(--band); color: var(--band-fg); }
+.top .in { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; padding-block: 20px; flex-wrap: wrap; }
+.brand { font-weight: 900; font-size: 1.2rem; letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand i { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+.nav { display: flex; gap: 22px; font-size: 0.92rem; color: var(--band-muted); flex-wrap: wrap; }
 .nav a { text-decoration: none; }
-.nav a:hover { color: var(--fg); }
-
-/* 공통 글자 */
-.eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
-h1, h2, h3 { text-wrap: balance; word-break: keep-all; }
-h1 { font-weight: 700; font-size: clamp(2.1rem, 5.4vw, 3.7rem); line-height: 1.22; letter-spacing: -0.025em; margin: 0 0 22px; }
-h2 { font-weight: 700; font-size: clamp(1.45rem, 3.2vw, 2rem); line-height: 1.3; letter-spacing: -0.02em; margin: 0; }
-.page-title { font-weight: 700; font-size: clamp(1.9rem, 4.6vw, 2.8rem); line-height: 1.22; letter-spacing: -0.025em; margin: 0 0 14px; }
-.lead { color: var(--muted); max-width: 34em; margin: 0 0 28px; word-break: keep-all; }
-.desc { color: var(--muted); margin: 0; max-width: 38em; word-break: keep-all; }
-.note { font-size: 0.8rem; color: var(--muted); margin: 0 0 14px; }
-
-/* 버튼과 칩 */
-.actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn { font: inherit; font-weight: 600; font-size: 0.95rem; padding: 12px 20px; border-radius: 6px; border: 1px solid var(--fg); background: var(--fg); color: var(--bg); text-decoration: none; cursor: pointer; display: inline-block; line-height: 1.3; }
-.btn.ghost { background: transparent; color: var(--fg); }
-.btn:hover { opacity: 0.86; }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.chip { font: inherit; font-size: 0.88rem; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; line-height: 1.5; text-decoration: none; display: inline-block; }
-.chip:hover { border-color: var(--fg); }
-.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-.fgroup { display: flex; gap: 8px 14px; align-items: baseline; flex-wrap: wrap; }
-.flabel { font-size: 0.8rem; color: var(--muted); width: 48px; flex: none; }
+.nav a:hover { color: var(--band-fg); }
 
 /* 히어로 */
-.hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 56px; padding-block: 48px 72px; border-top: 1px solid var(--line); align-items: center; }
+.hero .in { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px 56px; align-items: center; padding-block: 36px 72px; }
+h1 { font-weight: 900; font-size: clamp(2.6rem, 6.2vw, 5rem); line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 26px; word-break: keep-all; text-wrap: balance; }
+.hero .lead { color: var(--band-muted); max-width: 32em; margin: 0 0 32px; font-size: 1.05rem; word-break: keep-all; }
+.hero-row { display: flex; align-items: center; gap: 16px 26px; flex-wrap: wrap; }
+.cta { display: inline-flex; align-items: center; gap: 10px; padding: 16px 26px; background: var(--accent); color: var(--on-accent); font-weight: 700; border-radius: 6px; text-decoration: none; }
+.cta:hover { filter: brightness(1.06); }
+.hero-meta { color: var(--band-muted); font-size: 0.85rem; }
+
+/* 오늘의 원두 슬라이드 */
 .slider { min-width: 0; }
 .viewport { overflow: hidden; }
 .track { display: flex; transition: transform .7s cubic-bezier(.65, 0, .25, 1); }
 .slide { flex: 0 0 100%; min-width: 0; }
+.bsheet { border-top: 2px solid var(--band-fg); font-size: 0.88rem; line-height: 1.5; }
+.bsheet .head { display: flex; align-items: center; gap: 14px; padding: 14px 0 12px; border-bottom: 1px solid var(--band-line); }
+.bsheet .head small { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--band-muted); }
+.bsheet .head b { display: block; font-weight: 800; font-size: 0.95rem; }
+.bsheet .head a { display: block; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; text-decoration: none; line-height: 1.3; }
+.bsheet .r { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--band-line); }
+.bsheet .r > span:first-child { color: var(--band-muted); flex: none; }
+.bsheet .r > span:last-child { text-align: right; min-width: 0; display: inline-flex; align-items: center; gap: 10px; justify-content: flex-end; }
+.band .bar i { background: var(--band-line); }
+.band .rlabel { color: var(--band-muted); }
 .sdots { display: flex; gap: 4px; margin-top: 10px; }
 .sdot { width: 32px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; }
-.sdot span { display: block; width: 100%; height: 2px; background: var(--line); }
-.sdot[aria-current="true"] span { background: var(--fg); }
-.sheet { font-size: 0.86rem; line-height: 1.5; border-top: 2px solid var(--fg); }
-.sheet .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); }
-.sheet .row > span:first-child { color: var(--muted); flex: none; }
-.sheet .row > span:last-child { text-align: right; min-width: 0; }
-.sheet .head { font-weight: 700; font-size: 1.1rem; padding: 14px 0 12px; border-bottom: 1px solid var(--line); letter-spacing: -0.01em; }
-.sheet .head small { display: block; font-size: 0.7rem; font-weight: 600; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2px; }
-.sheet .head a { text-decoration: none; }
-.rr { display: inline-flex; align-items: center; gap: 10px; justify-content: flex-end; }
+.sdot span { display: block; width: 100%; height: 2px; background: var(--band-line); }
+.sdot[aria-current="true"] span { background: var(--band-fg); }
 
-/* 섹션 */
-section { padding-block: 60px; border-top: 1px solid var(--line); scroll-margin-top: 8px; }
-.sec-head { display: flex; justify-content: space-between; align-items: end; gap: 16px 40px; margin-bottom: 28px; flex-wrap: wrap; }
-.sec-head .desc { flex: 1 1 280px; max-width: 30em; }
-.more { font-size: 0.9rem; font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--fg); padding-bottom: 1px; white-space: nowrap; }
-.more:hover { color: var(--accent); border-color: var(--accent); }
-section.phead { padding-block: 28px 32px; border-top: 0; }
-section.tight { padding-block: 40px; }
-section.tight h2 { margin-bottom: 20px; }
-
-/* 로스팅 색 */
-.sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--r3); flex: none; }
-.sw.r1 { background: var(--r1); } .sw.r2 { background: var(--r2); } .sw.r3 { background: var(--r3); }
-.sw.r4 { background: var(--r4); } .sw.r5 { background: var(--r5); }
-.sw.r0 { background: transparent; border: 1px dashed var(--muted); }
-.rbar { display: flex; gap: 3px; }
-.rbar i { width: 16px; height: 6px; border-radius: 1px; background: var(--line); display: block; }
-.rbar i.on:nth-child(1) { background: var(--r1); } .rbar i.on:nth-child(2) { background: var(--r2); }
-.rbar i.on:nth-child(3) { background: var(--r3); } .rbar i.on:nth-child(4) { background: var(--r4); }
-.rbar i.on:nth-child(5) { background: var(--r5); }
-.rlabel { font-size: 0.78rem; color: var(--muted); }
-
-/* 인기 */
-.pop { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 0.78rem; color: var(--muted); }
-.rank { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; line-height: 1.5; border: 1px solid var(--fg); }
-.rank.top { background: var(--fg); color: var(--bg); }
-.rank.mid { color: var(--fg); }
-
-/* 목록 행 */
-.list { border-top: 2px solid var(--fg); }
-.item { position: relative; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.4fr) 130px 112px auto; grid-template-areas: "main notes roast pop act"; gap: 8px 20px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
-.item:hover { background: var(--surface); box-shadow: -12px 0 0 var(--surface), 12px 0 0 var(--surface); }
-.item .main { grid-area: main; min-width: 0; }
-.item .notes { grid-area: notes; margin: 0; word-break: keep-all; font-size: 0.95rem; }
-.item .roast { grid-area: roast; display: flex; flex-direction: column; gap: 6px; }
-.item .pop { grid-area: pop; }
-.item .act { grid-area: act; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-.item h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.015em; margin: 0; display: flex; align-items: center; gap: 9px; }
-.item h3 a { text-decoration: none; }
-.item h3 a::after { content: ""; position: absolute; inset: 0; }
-.item:hover h3 a { color: var(--accent); }
-.item .sub { font-size: 0.8rem; color: var(--muted); margin: 2px 0 0 19px; }
-.item .sub a { position: relative; z-index: 1; text-decoration: none; border-bottom: 1px solid var(--line); }
-.item .sub a:hover { border-color: var(--fg); color: var(--fg); }
-.go { position: relative; z-index: 1; font-size: 0.84rem; font-weight: 600; text-decoration: none; border: 1px solid var(--fg); border-radius: 6px; padding: 7px 12px; white-space: nowrap; background: var(--bg); }
-.go:hover { background: var(--fg); color: var(--bg); }
-.aff { font-size: 0.7rem; color: var(--muted); position: relative; z-index: 1; }
-.gear .item { grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto; grid-template-areas: "main notes act"; }
-.gear .item h3 { margin-left: 0; }
-.gear .check { grid-area: notes; margin: 0; font-size: 0.92rem; color: var(--muted); word-break: keep-all; }
-.gear .check b { color: var(--fg); font-weight: 600; }
-.gear .item:hover { background: transparent; box-shadow: none; }
-.count { font-size: 0.82rem; color: var(--muted); margin: 0 0 4px; }
-.empty { padding: 28px 0; color: var(--muted); border-bottom: 1px solid var(--line); }
-
-/* 브랜드 로고 */
-.logo { display: inline-flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; flex: none; }
+/* 로고 */
+.logo { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 64px; height: 64px; padding: 8px; border-radius: 10px; background: #FFFFFF; color: #17120F; border: 1px solid var(--line); overflow: hidden; font-weight: 900; font-size: 1.7rem; line-height: 1; }
 .logo img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
-.logo.lg { height: 88px; min-width: 88px; max-width: 240px; padding: 14px 18px; }
-.logo.sm { height: 36px; min-width: 36px; max-width: 110px; padding: 5px 8px; border-radius: 8px; }
-.logo.mono { background: var(--surface); color: var(--muted); font-weight: 700; padding: 0; }
-.logo.mono.lg { font-size: 2.1rem; }
-.logo.mono.sm { font-size: 1rem; }
-.bhero { display: flex; align-items: center; gap: 20px; margin-bottom: 18px; flex-wrap: wrap; }
-.bhead { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.logo.dk { color: #FFFFFF; border-color: transparent; }
+.logo.mono { padding: 0; }
+.logo.lg { height: 96px; width: auto; min-width: 96px; max-width: 260px; padding: 14px 20px; border-radius: 14px; font-size: 2.6rem; }
+.logo.lg.mono { width: 96px; padding: 0; }
+.logo.sm { height: 40px; width: auto; min-width: 40px; max-width: 120px; padding: 5px 9px; border-radius: 8px; font-size: 1.1rem; }
+.logo.sm.mono { width: 40px; padding: 0; }
+.logo.xs { width: 44px; height: 44px; padding: 6px; border-radius: 8px; font-size: 1.2rem; }
+
+/* 로스팅 스펙트럼 */
+.spec .in { padding-block: 44px 20px; }
+.sec-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 16px; }
+h2 { font-weight: 800; font-size: clamp(1.5rem, 3.4vw, 2.1rem); letter-spacing: -0.025em; line-height: 1.25; margin: 0; word-break: keep-all; }
+.reset { border: 0; background: none; padding: 0; font-size: 0.9rem; font-weight: 700; border-bottom: 2px solid var(--fg); cursor: pointer; }
+.blocks { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.blk { border-radius: 6px; padding: 16px; min-height: 136px; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; background: var(--c); color: var(--on-c); min-width: 0; }
+.blk b { display: block; font-size: 1rem; font-weight: 700; line-height: 1.3; word-break: keep-all; }
+.blk small { display: block; font-size: 0.78rem; line-height: 1.4; opacity: 0.85; margin-top: 4px; word-break: keep-all; }
+.blk .n { font-size: 2rem; font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
+.blk .n span { font-size: 0.8rem; font-weight: 500; margin-left: 3px; letter-spacing: 0; }
+.blk[data-r="1"] { --c: var(--r1); --on-c: var(--on-r1); }
+.blk[data-r="2"] { --c: var(--r2); --on-c: var(--on-r2); }
+.blk[data-r="3"] { --c: var(--r3); --on-c: var(--on-r3); }
+.blk[data-r="4"] { --c: var(--r4); --on-c: var(--on-r4); }
+.blk[data-r="5"] { --c: var(--r5); --on-c: var(--on-r5); box-shadow: inset 0 0 0 1px var(--line); }
+.blk[data-r="0"] { --c: transparent; --on-c: var(--fg); box-shadow: inset 0 0 0 1.5px var(--muted); background-image: repeating-linear-gradient(135deg, transparent 0 7px, var(--line) 7px 8px); }
+.blk[aria-pressed="true"] { outline: 3px solid var(--fg); outline-offset: 3px; }
+.blocks.filtered .blk:not([aria-pressed="true"]) { opacity: 0.5; }
+
+/* 목록 */
+.listing .in { padding-block: 40px 64px; }
+.count { color: var(--muted); font-size: 0.9rem; }
+.note { color: var(--muted); font-size: 0.8rem; margin: 6px 0 22px; }
+.rows { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--fg); }
+.rows.fresh { animation: fade .22s ease-out; }
+@keyframes fade { from { opacity: 0.2; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.item { border-bottom: 1px solid var(--line); }
+.item.late { display: none; }
+.row { position: relative; display: grid; grid-template-columns: 56px minmax(0, 2fr) minmax(0, 1.3fr) 140px 92px 92px; grid-template-areas: "no main notes roast rv buy"; gap: 6px 20px; align-items: center; padding: 20px 0; }
+.row:hover { background: var(--surface); box-shadow: -12px 0 0 var(--surface), 12px 0 0 var(--surface); }
+.rows.nonum .row { grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) 140px 92px 92px; grid-template-areas: "main notes roast rv buy"; }
+.rows.nonum .no { display: none; }
+.no { grid-area: no; font-weight: 900; font-size: 2.4rem; line-height: 1; letter-spacing: -0.03em; color: var(--muted); opacity: 0.55; }
+.row.top .no { color: var(--fg); opacity: 1; }
+.open { grid-area: main; min-width: 0; display: flex; align-items: center; gap: 16px; text-decoration: none; }
+.open::after { content: ""; position: absolute; inset: 0; }
+.txt { min-width: 0; display: block; }
+.brandname { display: block; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; line-height: 1.3; }
+.beanname { display: block; font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; line-height: 1.3; word-break: keep-all; }
+.open:hover .beanname { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.meta { display: block; font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+.notes { grid-area: notes; margin: 0; word-break: keep-all; }
+.roast { grid-area: roast; display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+.rlabel { font-size: 0.8rem; color: var(--muted); }
+.bar { display: flex; gap: 3px; }
+.bar i { width: 16px; height: 7px; border-radius: 1px; background: var(--line); }
+.bar i.on:nth-child(1) { background: var(--r1); } .bar i.on:nth-child(2) { background: var(--r2); }
+.bar i.on:nth-child(3) { background: var(--r3); } .bar i.on:nth-child(4) { background: var(--r4); }
+.bar i.on:nth-child(5) { background: var(--r5); box-shadow: inset 0 0 0 1px var(--line); }
+.rv { grid-area: rv; font-size: 0.82rem; color: var(--muted); text-align: right; }
+.buyc { grid-area: buy; justify-self: end; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.buy { font-weight: 700; font-size: 0.92rem; text-decoration: none; border-bottom: 2px solid var(--fg); padding-bottom: 1px; white-space: nowrap; }
+.buy:hover { border-color: var(--accent); }
+.aff { font-size: 0.7rem; color: var(--muted); }
+.more-row { display: flex; align-items: center; gap: 14px 24px; flex-wrap: wrap; margin-top: 26px; }
+.more { display: inline-block; border: 2px solid var(--fg); background: transparent; padding: 12px 22px; border-radius: 6px; font-weight: 700; cursor: pointer; text-decoration: none; }
+.more:hover { background: var(--fg); color: var(--bg); }
+.more2 { font-size: 0.9rem; font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--fg); }
+.empty { padding: 32px 0; color: var(--muted); }
+
+/* 일반 섹션 */
+.sec .in { padding-block: 56px; }
+.sec .in::before { content: ""; display: block; height: 1px; background: var(--line); margin-bottom: 56px; }
+.desc { color: var(--muted); margin: 0; max-width: 38em; word-break: keep-all; }
+.sec-head { display: flex; justify-content: space-between; align-items: end; gap: 16px 40px; margin-bottom: 26px; flex-wrap: wrap; }
+.sec-head .desc { flex: 1 1 280px; max-width: 30em; }
+.eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font: inherit; font-size: 0.9rem; padding: 7px 15px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; line-height: 1.5; text-decoration: none; display: inline-block; }
+.chip:hover { border-color: var(--fg); }
+.chip[aria-pressed="true"], .chip[aria-current="page"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
 
 /* 브랜드 카드 */
 .brands { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.bcard { display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); text-decoration: none; min-width: 0; }
+.bcard { display: flex; flex-direction: column; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); text-decoration: none; min-width: 0; }
 .bcard:hover { border-color: var(--fg); }
-.bcard b { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.015em; }
-.bcard .meta { font-size: 0.8rem; color: var(--muted); }
-.bcard .sws { display: flex; gap: 5px; flex-wrap: wrap; }
-.bcard .bn { font-size: 0.84rem; color: var(--muted); margin: 0; word-break: keep-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.legend { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: center; font-size: 0.78rem; color: var(--muted); margin-top: 16px; }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.bcard .bh { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.bcard b { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.015em; }
+.bcard .m { font-size: 0.82rem; color: var(--muted); }
+.bcard .bn { font-size: 0.86rem; color: var(--muted); margin: 0; word-break: keep-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sub-h { font-size: 1.1rem; font-weight: 800; margin: 40px 0 14px; }
 
-/* 목록 페이지 도구 */
-.toolbar { display: grid; gap: 14px; margin-bottom: 22px; }
-.tools { display: flex; gap: 10px; flex-wrap: wrap; }
-.tools input, .tools select { font: inherit; font-size: 0.95rem; padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); min-width: 0; }
-.tools input { flex: 1 1 260px; max-width: 460px; }
-
-/* 상세 */
-.crumbs { display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
-.crumbs a { text-decoration: none; }
-.crumbs a:hover { color: var(--fg); }
-.detail { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 48px; padding-block: 28px 56px; align-items: start; }
-.detail .pop { flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; margin-bottom: 18px; }
-.prose p { max-width: 38em; margin: 0 0 12px; word-break: keep-all; }
+/* 커피용품 */
+.gear { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--fg); }
+.grow { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto; gap: 8px 24px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.grow h3 { margin: 0; font-size: 1.1rem; font-weight: 800; }
+.grow p { margin: 0; color: var(--muted); font-size: 0.92rem; word-break: keep-all; }
+.grow p b { color: var(--fg); font-weight: 700; }
 
 /* 계산기 */
 .calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
 .field { display: grid; gap: 8px; margin-bottom: 22px; }
-.field label, .field .lbl { font-size: 0.8rem; color: var(--muted); }
+.field label, .field .lbl { font-size: 0.85rem; color: var(--muted); }
 .field input[type="number"] { font: inherit; font-size: 1.4rem; width: 160px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); }
-.out { border-top: 2px solid var(--fg); padding-top: 18px; }
-.out .big { font-weight: 800; font-size: clamp(2.6rem, 7vw, 4rem); letter-spacing: -0.03em; line-height: 1.05; }
+.out { border-top: 3px solid var(--fg); padding-top: 18px; }
+.out .big { font-weight: 900; font-size: clamp(2.8rem, 7vw, 4.2rem); letter-spacing: -0.03em; line-height: 1.05; }
 .out .big span { font-size: 1.1rem; font-weight: 500; color: var(--muted); margin-left: 6px; letter-spacing: 0; }
-.out ul { list-style: none; padding: 0; margin: 20px 0 0; font-size: 0.88rem; }
+.out ul { list-style: none; padding: 0; margin: 20px 0 0; font-size: 0.9rem; }
 .out li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .out li span:first-child { color: var(--muted); }
 
+/* 안쪽 페이지 */
+.crumbs { display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.82rem; color: var(--muted); padding-top: 24px; }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { color: var(--fg); }
+.phead { padding-block: 20px 28px; }
+.page-title { font-weight: 900; font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1.2; letter-spacing: -0.03em; margin: 0 0 14px; word-break: keep-all; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 38em; margin: 0 0 24px; word-break: keep-all; }
+.bhero { display: flex; align-items: center; gap: 22px; margin-bottom: 18px; flex-wrap: wrap; }
+.bhero .page-title { margin: 0; }
+.tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0 14px; }
+.tools input, .tools select { font: inherit; font-size: 0.95rem; padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); min-width: 0; }
+.tools input { flex: 1 1 260px; max-width: 460px; }
+.fgroup { display: flex; gap: 8px 14px; align-items: baseline; flex-wrap: wrap; margin-bottom: 12px; }
+.flabel { font-size: 0.82rem; color: var(--muted); width: 48px; flex: none; }
+.toolbar { margin-bottom: 8px; }
+
+.dpage { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; padding-block: 24px 48px; align-items: start; }
+.d-id { display: flex; align-items: center; gap: 22px; min-width: 0; margin-bottom: 22px; }
+.d-brand { display: block; font-weight: 800; font-size: 1.45rem; letter-spacing: -0.02em; line-height: 1.25; text-decoration: none; }
+.d-brand:hover { text-decoration: underline; text-underline-offset: 3px; }
+.d-name { font-weight: 900; font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.03em; line-height: 1.2; margin: 0; word-break: keep-all; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.cta2 { display: inline-block; padding: 13px 22px; background: var(--accent); color: var(--on-accent); font-weight: 700; border-radius: 6px; text-decoration: none; }
+.cta2:hover { filter: brightness(1.06); }
+.ghost { display: inline-block; padding: 11px 20px; border: 2px solid var(--fg); border-radius: 6px; font-weight: 700; text-decoration: none; }
+.ghost:hover { background: var(--fg); color: var(--bg); }
+.sheet { border-top: 3px solid var(--fg); font-size: 0.92rem; }
+.sheet .r { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.sheet .r > span:first-child { color: var(--muted); flex: none; }
+.sheet .r > span:last-child { text-align: right; min-width: 0; display: inline-flex; align-items: center; gap: 10px; justify-content: flex-end; }
+.tight .in { padding-block: 40px; }
+.tight h2 { margin-bottom: 20px; }
+.prose p { max-width: 38em; margin: 0 0 12px; word-break: keep-all; }
+
 /* 푸터 */
-footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 32px 48px; color: var(--muted); font-size: 0.85rem; }
+footer .in { padding-block: 0 56px; color: var(--muted); font-size: 0.85rem; }
+footer .fin { border-top: 1px solid var(--line); padding-top: 32px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 24px 48px; }
 footer p { margin: 0 0 14px; max-width: 42em; word-break: keep-all; }
 footer .flinks { display: flex; flex-wrap: wrap; gap: 6px 16px; }
 footer .flinks a { text-decoration: none; }
 footer .flinks a:hover { color: var(--fg); }
 
 @media (max-width: 900px) {
+  .blocks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .brands { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero .in { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 820px) {
-  .hero, .calc, .detail, footer { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .hero { padding-block: 28px 44px; }
-  section { padding-block: 44px; }
-  .item { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main pop" "notes notes" "roast act"; gap: 10px 12px; padding: 16px 0; }
-  .item .roast { align-self: center; }
-  .gear .item { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main act" "notes notes"; }
+@media (max-width: 760px) {
+  .hero .in { padding-block: 24px 48px; }
+  .blocks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .blk { min-height: 112px; padding: 14px; }
+  .row { grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: "no main buy" "no notes notes" "no roast rv"; gap: 10px 12px; align-items: start; }
+  .rows.nonum .row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main buy" "notes notes" "roast rv"; }
+  .no { font-size: 1.7rem; }
+  .open { gap: 12px; }
+  .logo { width: 52px; height: 52px; font-size: 1.4rem; padding: 6px; }
+  .beanname { font-size: 1.1rem; }
+  .rv { text-align: right; align-self: center; }
+  .roast { align-self: center; }
+  .sec .in { padding-block: 44px; }
+  .sec .in::before { margin-bottom: 44px; }
+  .grow { grid-template-columns: minmax(0, 1fr) auto; }
+  .grow p { grid-column: 1 / -1; order: 3; }
+  .calc, .dpage, footer .fin { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .logo.lg { height: 76px; min-width: 76px; padding: 10px 14px; }
+  .logo.lg.mono { width: 76px; font-size: 2rem; }
   .nav { gap: 16px; }
 }
-@media (prefers-reduced-motion: reduce) { .track { transition: none; } html { scroll-behavior: auto; } }
-@media (prefers-reduced-motion: no-preference) { .chip, .btn, .go, .bcard { transition: background-color .15s, color .15s, border-color .15s, opacity .15s; } }`;
+@media (prefers-reduced-motion: reduce) { .track { transition: none; } .rows.fresh { animation: none; } html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: no-preference) { .blk { transition: transform .15s, opacity .2s; } .blk:hover { transform: translateY(-3px); } .cta, .cta2, .buy, .more, .chip, .bcard, .ghost { transition: filter .15s, border-color .15s, background-color .15s, color .15s; } }
+.grow .buyc { grid-area: auto; }
+button.blk { border: 0; font: inherit; text-align: left; cursor: pointer; }
+.blk > span:first-child { display: block; }`;
 const APPJS = String.raw`(function () {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var each = function (list, fn) { Array.prototype.forEach.call(list, fn); };
@@ -269,13 +307,16 @@ const APPJS = String.raw`(function () {
     var empty = document.getElementById('empty');
     var q = document.getElementById('q');
     var sortSel = document.getElementById('sort');
-    var st = { q: '', form: '전체', brand: '전체', sort: 'pop' };
+    var st = { q: '', form: '전체', brand: '전체', roast: '전체', sort: 'pop' };
+    var blocksEl = document.getElementById('blocks');
+    var resetBtn = document.getElementById('reset');
 
     var params = new URLSearchParams(location.search);
     if (params.get('q')) st.q = params.get('q');
     if (params.get('form')) st.form = params.get('form');
     if (params.get('brand')) st.brand = params.get('brand');
     if (params.get('sort')) st.sort = params.get('sort');
+    if (/^[0-5]$/.test(params.get('roast') || '')) st.roast = params.get('roast');
 
     var num = function (el, k) { return parseFloat(el.getAttribute(k)); };
     var byPop = function (a, b) { return (num(b, 'data-reviews') - num(a, 'data-reviews')) || (num(a, 'data-i') - num(b, 'data-i')); };
@@ -303,6 +344,7 @@ const APPJS = String.raw`(function () {
       rows.forEach(function (r) {
         var ok = (st.form === '전체' || r.getAttribute('data-form') === st.form) &&
                  (st.brand === '전체' || r.getAttribute('data-brand') === st.brand) &&
+                 (st.roast === '전체' || (st.roast === '0' ? !(num(r, 'data-roast') > 0) : num(r, 'data-roast') === parseInt(st.roast, 10))) &&
                  (!term || r.getAttribute('data-search').indexOf(term) > -1);
         r.hidden = !ok;
         if (ok) shown.push(r);
@@ -310,11 +352,17 @@ const APPJS = String.raw`(function () {
       shown.sort(sorters[st.sort] || sorters.pop).forEach(function (r) { list.appendChild(r); });
       count.textContent = shown.length + '개 상품';
       empty.hidden = shown.length !== 0;
+      var plain = st.sort === 'pop' && st.roast === '전체' && st.form === '전체' && st.brand === '전체' && !term;
+      list.classList.toggle('nonum', !plain);
+      blocksEl.classList.toggle('filtered', st.roast !== '전체');
+      each(blocksEl.querySelectorAll('.blk'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === st.roast)); });
+      resetBtn.hidden = st.roast === '전체';
 
       var p = new URLSearchParams();
       if (st.q) p.set('q', st.q);
       if (st.form !== '전체') p.set('form', st.form);
       if (st.brand !== '전체') p.set('brand', st.brand);
+      if (st.roast !== '전체') p.set('roast', st.roast);
       if (st.sort !== 'pop') p.set('sort', st.sort);
       var s = p.toString();
       try { history.replaceState(null, '', location.pathname + (s ? '?' + s : '')); } catch (e) {}
@@ -334,6 +382,12 @@ const APPJS = String.raw`(function () {
       var b = e.target.closest('button'); if (!b) return;
       st.brand = b.getAttribute('data-v'); setPressed('chips-brand', st.brand); apply();
     });
+    blocksEl.addEventListener('click', function (e) {
+      var b = e.target.closest('.blk'); if (!b) return;
+      var v = b.getAttribute('data-v');
+      st.roast = st.roast === v ? '전체' : v; apply();
+    });
+    resetBtn.addEventListener('click', function () { st.roast = '전체'; apply(); });
     q.addEventListener('input', function () { st.q = q.value; apply(); });
     sortSel.addEventListener('change', function () { st.sort = sortSel.value; apply(); });
 
@@ -432,28 +486,26 @@ const itemsOf = brand => sorted.filter(it => it.brand === brand);
 const brandUrl = b => '/brands/' + brandByName.get(b).slug + '/';
 const beanUrl = it => '/beans/' + it.slug + '/';
 
-// 로고: 파일이 있으면 이미지, 없으면 브랜드 이름 첫 글자 배지. 다크 모드에서도 보이도록 밝은 판 위에 올립니다.
+// 로고: 파일이 있으면 이미지, 없으면 브랜드 이름 첫 글자 배지. logoBg 가 있으면 그 색의 판 위에 올립니다.
+// size: '' (기본 64px), 'xs', 'sm', 'lg'
 function logoHtml(b, P, size, decorative) {
+  const cls = 'logo' + (size ? ' ' + size : '') + (b.logoBgCss ? ' dk' : '');
+  const st = b.logoBgCss ? ' style="background:' + b.logoBgCss + '"' : '';
   if (b.logoPath) {
-    return '<span class="logo ' + size + '"' + (b.logoBgCss ? ' style="background:' + b.logoBgCss + '"' : '') + '><img src="' + P + esc(b.logoPath) + '" alt="' + (decorative ? '' : esc(b.name) + ' 로고') + '" loading="lazy" decoding="async"></span>';
+    return '<span class="' + cls + '"' + st + '><img src="' + P + esc(b.logoPath) + '" alt="' + (decorative ? '' : esc(b.name) + ' 로고') + '" loading="lazy" decoding="async"></span>';
   }
-  return '<span class="logo mono ' + size + '" aria-hidden="true">' + esc(Array.from(b.name)[0]) + '</span>';
+  return '<span class="' + cls + ' mono"' + st + ' aria-hidden="true">' + esc(Array.from(b.name)[0]) + '</span>';
 }
-function swatch(it) { return '<span class="sw r' + (it.roast > 0 ? it.roast : 0) + '" aria-hidden="true"></span>'; }
-function rbar(roast) {
+function bars(roast) {
   let d = '';
   for (let k = 1; k <= 5; k++) d += '<i class="' + (k <= roast ? 'on' : '') + '"></i>';
-  return '<div class="rbar" aria-hidden="true">' + d + '</div>';
+  return '<span class="bar" aria-hidden="true">' + d + '</span>';
 }
 function roastHtml(it) {
-  if (!(it.roast > 0)) return '<span class="rlabel">로스팅 미표기</span>';
-  return rbar(it.roast) + '<span class="rlabel">' + esc(it.roastLabel) + '</span>';
+  if (!(it.roast > 0)) return '<span class="rlabel">그 외</span>';
+  return bars(it.roast) + '<span class="rlabel">' + esc(it.roastLabel || ROAST_NAMES[it.roast - 1]) + '</span>';
 }
-function popHtml(it) {
-  if (it.reviews == null) return '<div class="pop"><span>후기 정보 없음</span></div>';
-  const cls = it.rank <= 3 ? 'rank top' : (it.rank <= 6 ? 'rank mid' : '');
-  return '<div class="pop">' + (cls ? '<span class="' + cls + '">인기 ' + it.rank + '위</span>' : '') + '<span>후기 ' + fmt(it.reviews) + '건</span></div>';
-}
+function rvText(it) { return it.reviews == null ? '후기 정보 없음' : '후기 ' + fmt(it.reviews) + '건'; }
 function buyUrl(it) {
   if (/^https?:\/\//.test(it.url || '')) return it.url;
   const q = it.brand + ' ' + it.name + (it.form === '원두' ? ' 원두' : ' ' + it.form);
@@ -476,9 +528,29 @@ const FORM_TEXT = {
   '디카페인': '카페인을 줄인 커피입니다. 맛 설명과 로스팅 정보는 판매처 상품 페이지를 참고했습니다.'
 };
 const ROAST_NAMES = ['라이트', '미디엄 라이트', '미디엄', '미디엄 다크', '다크'];
+const ROAST_BLOCKS = [
+  { r: 1, name: '라이트', text: '산미와 향이 선명' },
+  { r: 2, name: '미디엄 라이트', text: '산미와 단맛의 균형' },
+  { r: 3, name: '미디엄', text: '단맛과 바디의 균형' },
+  { r: 4, name: '미디엄 다크', text: '고소함과 바디감' },
+  { r: 5, name: '다크', text: '쓴맛과 묵직한 바디' },
+  { r: 0, name: '그 외', text: '로스팅 정보가 없는 상품' }
+];
+const roastCount = r => items.filter(it => (r === 0 ? !(it.roast > 0) : it.roast === r)).length;
+const NOTE = '인기 순위는 마켓컬리 후기 수 기준이며 맛 평가가 아닙니다.';
+
+// 로스팅 스펙트럼 블록. 홈에서는 링크(a), 전체 목록에서는 버튼(button)입니다.
+function blocks(P, asButton) {
+  return ROAST_BLOCKS.map(k => {
+    const inner = '<span><b>' + k.name + '</b><small>' + k.text + '</small></span><span class="n">' + roastCount(k.r) + '<span>종</span></span>';
+    return asButton
+      ? '<button type="button" class="blk" data-v="' + k.r + '" aria-pressed="false" data-r="' + k.r + '">' + inner + '</button>'
+      : '<a class="blk" data-r="' + k.r + '" href="' + P + 'beans/?roast=' + k.r + '">' + inner + '</a>';
+  }).join('');
+}
 
 // ---------- 페이지 뼈대 ----------
-function layout({ P, urlPath, title, desc, body, ld }) {
+function layout({ P, urlPath, title, desc, body, ld, hero }) {
   const root = P || './';
   const canonical = site.url + urlPath;
   return '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n' +
@@ -494,22 +566,23 @@ function layout({ P, urlPath, title, desc, body, ld }) {
     '<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">\n' +
     '<link rel="stylesheet" href="' + P + 'style.css">\n' +
     (ld ? ld + '\n' : '') +
-    '</head>\n<body>\n<div class="wrap">\n' +
-    '<header class="top"><a class="brand" href="' + root + '"><i></i>' + esc(site.name) + '</a>' +
-    '<nav class="nav" aria-label="주요 메뉴"><a href="' + P + 'beans/">전체 원두</a><a href="' + root + '#brands">브랜드</a><a href="' + root + '#gear">커피용품</a><a href="' + root + '#ratio">추출 비율</a></nav></header>\n' +
-    body + '\n' + footer(P) + '\n</div>\n<script src="' + P + 'app.js" defer></script>\n</body>\n</html>\n';
+    '</head>\n<body>\n<div class="band">\n' +
+    '<header class="top"><div class="in"><a class="brand" href="' + root + '"><i></i>' + esc(site.name) + '</a>' +
+    '<nav class="nav" aria-label="주요 메뉴"><a href="' + P + 'beans/">전체 원두</a><a href="' + root + '#brands">브랜드</a><a href="' + root + '#gear">커피용품</a><a href="' + root + '#ratio">추출 비율</a></nav></div></header>\n' +
+    (hero || '') + '</div>\n' +
+    body + '\n' + footer(P) + '\n<script src="' + P + 'app.js" defer></script>\n</body>\n</html>\n';
 }
 function footer(P) {
-  return '<footer><div><strong style="color:var(--fg);">' + esc(site.name) + '</strong></div><div>' +
+  return '<footer><div class="in"><div class="fin"><div><strong style="color:var(--fg);">' + esc(site.name) + '</strong></div><div>' +
     '<p>' + esc(site.name) + '는 제품을 직접 판매하지 않으며 외부 구매처로 연결하는 정보 서비스입니다. ' +
     (site.affiliate ? '구매처 링크에는 판매 수수료를 받는 제휴 링크가 포함되어 있으며, 해당 링크 옆에 표시합니다. ' : '') +
     '가격, 재고, 배송과 교환은 각 구매처의 정책을 따릅니다. 상품 구성과 맛 설명은 판매처 정보를 참고한 것으로 시기에 따라 바뀔 수 있습니다.</p>' +
-    '<div class="flinks"><a href="' + P + 'beans/">전체 원두</a>' + brands.map(b => '<a href="' + P + 'brands/' + b.slug + '/">' + esc(b.name) + '</a>').join('') + '</div></div></footer>';
+    '<div class="flinks"><a href="' + P + 'beans/">전체 원두</a>' + brands.map(b => '<a href="' + P + 'brands/' + b.slug + '/">' + esc(b.name) + '</a>').join('') + '</div></div></div></div></footer>';
 }
 function crumbs(P, parts) {
   const root = P || './';
-  return '<nav class="crumbs" aria-label="현재 위치"><a href="' + root + '">홈</a>' +
-    parts.map(p => '<span>/</span>' + (p.href ? '<a href="' + p.href + '">' + esc(p.label) + '</a>' : '<span aria-current="page">' + esc(p.label) + '</span>')).join('') + '</nav>';
+  return '<div class="in"><nav class="crumbs" aria-label="현재 위치"><a href="' + root + '">홈</a>' +
+    parts.map(p => '<span>/</span>' + (p.href ? '<a href="' + p.href + '">' + esc(p.label) + '</a>' : '<span aria-current="page">' + esc(p.label) + '</span>')).join('') + '</nav></div>';
 }
 function breadcrumbLd(parts) {
   return jsonLd({
@@ -517,19 +590,19 @@ function breadcrumbLd(parts) {
     itemListElement: parts.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.name, item: site.url + p.path }))
   });
 }
-// 상품 행: 행 전체를 누르면 상세 페이지로, 구매처 연결은 별도 버튼입니다.
+// 상품 행: 로고와 브랜드명, 상품명을 크게 보여 주고 행을 누르면 상세 페이지로, 구매처 연결은 별도 링크입니다.
 function row(it, P) {
+  const b = brandByName.get(it.brand);
   const search = (it.name + ' ' + it.brand + ' ' + it.form + ' ' + it.notes).toLowerCase();
-  return '<article class="item" data-i="' + it.i + '" data-brand="' + esc(it.brand) + '" data-form="' + esc(it.form) + '" data-reviews="' + (it.reviews == null ? -1 : it.reviews) + '" data-roast="' + it.roast + '" data-name="' + esc(it.name) + '" data-search="' + esc(search) + '">' +
-    '<div class="main"><h3>' + swatch(it) + '<a href="' + P + 'beans/' + it.slug + '/">' + esc(it.name) + '</a></h3>' +
-    '<div class="sub"><a href="' + P + 'brands/' + brandByName.get(it.brand).slug + '/">' + esc(it.brand) + '</a> · ' + esc(it.form) + ' ' + esc(it.size) + '</div></div>' +
+  const top = it.rank != null && it.rank <= 3;
+  return '<li class="item" data-i="' + it.i + '" data-brand="' + esc(it.brand) + '" data-form="' + esc(it.form) + '" data-reviews="' + (it.reviews == null ? -1 : it.reviews) + '" data-roast="' + it.roast + '" data-name="' + esc(it.name) + '" data-search="' + esc(search) + '">' +
+    '<div class="row' + (top ? ' top' : '') + '"><span class="no" aria-hidden="true">' + (it.rank == null ? '–' : it.rank) + '</span>' +
+    '<a class="open" href="' + P + 'beans/' + it.slug + '/">' + logoHtml(b, P, '', true) +
+    '<span class="txt"><span class="brandname">' + esc(it.brand) + '</span><span class="beanname">' + esc(it.name) + '</span><span class="meta">' + esc((it.form + ' ' + it.size).trim()) + '</span></span></a>' +
     '<p class="notes">' + esc(it.notes) + '</p>' +
     '<div class="roast">' + roastHtml(it) + '</div>' +
-    popHtml(it) +
-    '<div class="act"><a class="go" href="' + esc(buyUrl(it)) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' + affLabel() + '</div></article>';
-}
-function legend() {
-  return '<div class="legend" aria-label="로스팅 색 안내">로스팅 ' + ROAST_NAMES.map((n, k) => '<span><i class="sw r' + (k + 1) + '"></i>' + n + '</span>').join('') + '<span><i class="sw r0"></i>미표기</span></div>';
+    '<span class="rv">' + (it.rank != null ? '<span class="sr">인기 ' + it.rank + '위, </span>' : '') + rvText(it) + '</span>' +
+    '<div class="buyc"><a class="buy" href="' + esc(buyUrl(it)) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' + affLabel() + '</div></div></li>';
 }
 function write(rel, content) {
   const f = path.join(OUT, rel);
@@ -543,16 +616,21 @@ function homePage() {
   const feat = sorted.filter(it => it.featured);
   const slides = feat.length ? feat : sorted.slice(0, 5);
   const slideHtml = slides.map((b, i) => {
-    const rv = b.reviews == null ? '정보 없음' : fmt(b.reviews) + '건 · 마켓컬리';
+    const br = brandByName.get(b.brand);
     return '<div class="slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' / ' + slides.length + '"' + (i ? ' aria-hidden="true"' : '') + '>' +
-      '<div class="sheet"><div class="head"><small>Today\'s Bean</small><a href="beans/' + b.slug + '/">' + esc(b.name) + '</a></div>' +
-      '<div class="row"><span>브랜드</span><span>' + esc(b.brand) + '</span></div>' +
-      '<div class="row"><span>형태</span><span>' + esc(b.form) + ' ' + esc(b.size) + '</span></div>' +
-      '<div class="row"><span>로스팅</span><span class="rr">' + roastHtml(b) + '</span></div>' +
-      '<div class="row"><span>컵 노트</span><span>' + esc(b.notes) + '</span></div>' +
-      '<div class="row"><span>후기</span><span>' + esc(rv) + '</span></div></div></div>';
+      '<div class="bsheet"><div class="head">' + logoHtml(br, P, 'xs', true) + '<div><small>Today\'s Bean</small><b>' + esc(b.brand) + '</b><a href="beans/' + b.slug + '/">' + esc(b.name) + '</a></div></div>' +
+      '<div class="r"><span>형태</span><span>' + esc((b.form + ' ' + b.size).trim()) + '</span></div>' +
+      '<div class="r"><span>로스팅</span><span>' + roastHtml(b) + '</span></div>' +
+      '<div class="r"><span>컵 노트</span><span>' + esc(b.notes) + '</span></div>' +
+      '<div class="r"><span>후기</span><span>' + (b.reviews == null ? '정보 없음' : esc(fmt(b.reviews) + '건 · 마켓컬리')) + '</span></div></div></div>';
   }).join('');
   const dots = slides.map((b, i) => '<button type="button" class="sdot" aria-label="' + (i + 1) + '번째 원두 보기" aria-current="' + (i === 0) + '"><span></span></button>').join('');
+
+  const hero = '<div class="hero"><div class="in"><div>\n' +
+    '<h1>원두는 취향대로,<br>구매는 편하게.</h1>\n' +
+    '<p class="lead">브랜드별 원두의 컵 노트와 로스팅 단계를 비교하고, 마음에 드는 제품은 구매처로 바로 연결해 드립니다. ' + esc(site.name) + '는 직접 판매하지 않고 고르는 과정만 돕습니다.</p>\n' +
+    '<div class="hero-row"><a class="cta" href="beans/">전체 원두 ' + items.length + '종 보기 →</a><span class="hero-meta">' + brands.length + '개 브랜드</span></div></div>\n' +
+    '<div class="slider" id="slider" role="region" aria-roledescription="carousel" aria-label="오늘의 원두"><div class="viewport"><div class="track" id="track">' + slideHtml + '</div></div><div class="sdots" id="sdots">' + dots + '</div></div></div></div>';
 
   const seen = new Set();
   const popular = [];
@@ -569,48 +647,42 @@ function homePage() {
     const list = itemsOf(b.name);
     if (!list.length) return '';
     const fs_ = forms.filter(f => list.some(it => it.form === f)).join('·');
-    return '<a class="bcard" href="brands/' + b.slug + '/"><span class="bhead">' + logoHtml(b, '', 'sm', true) + '<b>' + esc(b.name) + '</b></span><span class="meta">' + list.length + '종 · ' + esc(fs_) + '</span>' +
-      (list.some(it => it.roast > 0) ? '<span class="sws" aria-hidden="true">' + list.filter(it => it.roast > 0).map(swatch).join('') + '</span>' : '<span class="meta">로스팅 미표기</span>') + '<p class="bn">' + esc(list[0].notes) + '</p></a>';
+    return '<a class="bcard" href="brands/' + b.slug + '/"><span class="bh">' + logoHtml(b, '', '', true) + '<b>' + esc(b.name) + '</b></span><span class="m">' + list.length + '종 · ' + esc(fs_) + '</span><p class="bn">' + esc(list[0].notes) + '</p></a>';
   }).join('');
 
   const formLinks = forms.map(f => '<a class="chip" href="beans/?form=' + encodeURIComponent(f) + '">' + esc(f) + ' ' + items.filter(it => it.form === f).length + '</a>').join('');
 
   const gear = (data.gear || []).map(g => {
     const href = /^https?:\/\//.test(g.url || '') ? g.url : 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(g.query || g.name);
-    return '<article class="item"><div class="main"><h3>' + esc(g.name) + '</h3></div><p class="check"><b>' + esc(g.point || '') + '</b> ' + esc(g.text || '') + '</p>' +
-      '<div class="act"><a class="go" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' + affLabel() + '</div></article>';
+    return '<li class="grow"><h3>' + esc(g.name) + '</h3><p><b>' + esc(g.point || '') + '</b> ' + esc(g.text || '') + '</p>' +
+      '<div class="buyc"><a class="buy" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' + affLabel() + '</div></li>';
   }).join('');
 
-  const body = '<main id="top">\n<div class="hero">\n<div>\n' +
-    '<h1>원두는 취향대로,<br>구매는 편하게.</h1>\n' +
-    '<p class="lead">브랜드별 원두의 컵 노트와 로스팅 단계를 비교하고, 마음에 드는 제품은 구매처로 바로 연결해 드립니다. ' + esc(site.name) + '는 직접 판매하지 않고 고르는 과정만 돕습니다.</p>\n' +
-    '<div class="actions"><a class="btn" href="beans/">전체 원두 ' + items.length + '종 보기</a><a class="btn ghost" href="#ratio">추출 비율 계산</a></div>\n</div>\n' +
-    '<div class="slider" id="slider" role="region" aria-roledescription="carousel" aria-label="오늘의 원두"><div class="viewport"><div class="track" id="track">' + slideHtml + '</div></div><div class="sdots" id="sdots">' + dots + '</div></div>\n</div>\n' +
+  const body = '<main id="top">\n' +
+    '<section class="spec" id="roast"><div class="in"><div class="sec-top"><h2>로스팅으로 찾기</h2></div><div class="blocks">' + blocks(P, false) + '</div></div></section>\n' +
+    '<section class="listing" id="popular"><div class="in"><div class="sec-top"><h2>인기 순</h2><a class="more2" href="beans/">전체 보기 →</a></div>' +
+    '<p class="note">' + NOTE + '</p><ul class="rows">' + popular.map(it => row(it, P)).join('\n') + '</ul></div></section>\n' +
 
-    '<section id="popular">\n<div class="sec-head"><div><p class="eyebrow">Popular</p><h2>지금 인기 있는 원두</h2></div><a class="more" href="beans/">전체 보기 →</a></div>\n' +
-    '<p class="note">인기 순위는 마켓컬리 후기 수 기준이며 맛 평가가 아닙니다 · ' + esc(UPDATED) + ' 확인</p>\n' +
-    '<div class="list">' + popular.map(it => row(it, P)).join('\n') + '</div>\n' + legend() + '\n</section>\n' +
-
-    '<section id="brands">\n<div class="sec-head"><div><p class="eyebrow">Brands</p><h2>브랜드로 찾기</h2></div><p class="desc">브랜드를 고르면 그 브랜드의 원두만 모아 볼 수 있습니다.</p></div>\n' +
+    '<section class="sec" id="brands"><div class="in"><div class="sec-head"><div><p class="eyebrow">Brands</p><h2>브랜드로 찾기</h2></div><p class="desc">브랜드를 고르면 그 브랜드의 원두만 모아 볼 수 있습니다.</p></div>\n' +
     '<div class="brands">' + brandCards + '</div>\n' +
-    '<div class="sec-head" style="margin:36px 0 14px"><div><p class="eyebrow">Types</p><h2 style="font-size:1.2rem">형태로 찾기</h2></div></div>\n<div class="chips">' + formLinks + '</div>\n</section>\n' +
+    '<h3 class="sub-h">형태로 찾기</h3><div class="chips">' + formLinks + '</div></div></section>\n' +
 
-    '<section id="gear">\n<div class="sec-head"><div><p class="eyebrow">Gear</p><h2>처음 갖출 커피용품</h2></div>' +
-    '<p class="desc">집에서 핸드드립을 시작할 때 맛 차이를 만드는 순서대로 정리했습니다.</p></div>\n<div class="gear list">' + gear + '</div>\n</section>\n' +
+    '<section class="sec" id="gear"><div class="in"><div class="sec-head"><div><p class="eyebrow">Gear</p><h2>처음 갖출 커피용품</h2></div>' +
+    '<p class="desc">집에서 핸드드립을 시작할 때 맛 차이를 만드는 순서대로 정리했습니다.</p></div>\n<ul class="gear">' + gear + '</ul></div></section>\n' +
 
-    '<section id="ratio">\n<div class="sec-head"><div><p class="eyebrow">Brew Ratio</p><h2>추출 비율 계산</h2></div>' +
+    '<section class="sec" id="ratio"><div class="in"><div class="sec-head"><div><p class="eyebrow">Brew Ratio</p><h2>추출 비율 계산</h2></div>' +
     '<p class="desc">원두 양과 비율을 정하면 필요한 물의 양이 나옵니다. 1:15는 진하게, 1:17은 가볍게 마시는 쪽입니다.</p></div>\n' +
     '<div class="calc"><div>\n<div class="field"><label for="beanG">원두 (g)</label><input id="beanG" type="number" inputmode="decimal" min="1" max="200" step="0.5" value="20"></div>\n' +
     '<div class="field"><span class="lbl" id="ratioLbl">비율 (원두 : 물)</span><div class="chips" role="group" aria-labelledby="ratioLbl" id="ratioChips">' +
     [15, 16, 17].map(r => '<button type="button" class="chip" data-r="' + r + '" aria-pressed="' + (r === 16) + '">1 : ' + r + '</button>').join('') + '</div></div>\n</div>\n' +
     '<div class="out" aria-live="polite"><div class="big"><b id="waterOut">320</b><span>ml 물</span></div><ul>' +
     '<li><span>비율</span><span id="ratioOut">1 : 16</span></li><li><span>추출 후 예상 양</span><span id="cupOut">약 280 ml</span></li>' +
-    '<li><span>목표 추출 시간</span><span>2:30 – 3:30</span></li><li><span>물 온도</span><span>90 – 96 °C</span></li></ul></div></div>\n</section>\n</main>';
+    '<li><span>목표 추출 시간</span><span>2:30 – 3:30</span></li><li><span>물 온도</span><span>90 – 96 °C</span></li></ul></div></div></div></section>\n</main>';
 
   const top3 = brands.slice(0, 3).map(b => b.name).join(', ');
   const desc = trunc(top3 + ' 등 ' + brands.length + '개 로스터리의 원두·드립백·콜드브루 ' + items.length + '종을 컵노트와 로스팅 단계로 비교하고, 마음에 드는 제품은 구매처로 바로 연결합니다.', 160);
   return layout({
-    P, urlPath: '/', title: site.name + ' | 원두·드립백 브랜드별 컵노트 비교와 구매처 연결', desc, body,
+    P, urlPath: '/', title: site.name + ' | 원두·드립백 브랜드별 컵노트 비교와 구매처 연결', desc, body, hero,
     ld: jsonLd({ '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url + '/', inLanguage: 'ko' })
   });
 }
@@ -620,17 +692,18 @@ function listPage() {
   const P = '../';
   const chip = (v, label, pressed) => '<button type="button" class="chip" data-v="' + esc(v) + '" aria-pressed="' + pressed + '">' + esc(label) + '</button>';
   const body = '<main>\n' + crumbs(P, [{ label: '전체 원두' }]) +
-    '\n<section class="phead"><p class="eyebrow">All Beans</p><h1 class="page-title">전체 원두 ' + items.length + '종</h1>' +
-    '<p class="lead">브랜드, 형태를 고르거나 이름과 컵 노트로 검색해 보세요. 기본 순서는 후기가 많은 순입니다.</p></section>\n' +
-    '<section class="tight" id="list-page" style="border-top:0;padding-top:8px">\n<div class="toolbar" id="toolbar" hidden>\n' +
-    '<div class="tools"><label class="sr" for="q">검색</label><input id="q" type="search" placeholder="이름, 브랜드, 컵 노트로 검색 (예: 초콜릿)" autocomplete="off">' +
+    '\n<section class="phead"><div class="in"><p class="eyebrow">All Beans</p><h1 class="page-title">전체 원두 ' + items.length + '종</h1>' +
+    '<p class="lead">로스팅, 형태, 브랜드를 고르거나 이름과 컵 노트로 검색해 보세요. 기본 순서는 후기가 많은 순입니다.</p></div></section>\n' +
+    '<div id="list-page">\n<div class="toolbar" id="toolbar" hidden>\n' +
+    '<section class="spec"><div class="in" style="padding-top:8px"><div class="sec-top"><h2>로스팅으로 찾기</h2><button type="button" class="reset" id="reset" hidden>전체 보기</button></div><div class="blocks" id="blocks">' + blocks(P, true) + '</div></div></section>\n' +
+    '<div class="in" style="padding-top:28px"><div class="tools"><label class="sr" for="q">검색</label><input id="q" type="search" placeholder="이름, 브랜드, 컵 노트로 검색 (예: 초콜릿)" autocomplete="off">' +
     '<label class="sr" for="sort">정렬</label><select id="sort"><option value="pop">인기순</option><option value="light">로스팅 라이트순</option><option value="dark">로스팅 다크순</option><option value="name">이름순</option></select></div>\n' +
     '<div class="fgroup"><span class="flabel">형태</span><div class="chips" id="chips-form">' + chip('전체', '전체', true) + forms.map(f => chip(f, f, false)).join('') + '</div></div>\n' +
-    '<div class="fgroup"><span class="flabel">브랜드</span><div class="chips" id="chips-brand">' + chip('전체', '전체', true) + brands.map(b => chip(b.name, b.name, false)).join('') + '</div></div>\n</div>\n' +
-    '<p class="count" id="count" aria-live="polite">' + items.length + '개 상품</p>\n' +
-    '<p class="note">인기 순위는 마켓컬리 후기 수 기준이며 맛 평가가 아닙니다 · ' + esc(UPDATED) + ' 확인</p>\n' +
-    '<div class="list" id="beans">' + sorted.map(it => row(it, P)).join('\n') + '</div>\n' +
-    '<p class="empty" id="empty" hidden>조건에 맞는 상품이 없습니다. 검색어나 필터를 바꿔 보세요.</p>\n' + legend() + '\n</section>\n</main>';
+    '<div class="fgroup"><span class="flabel">브랜드</span><div class="chips" id="chips-brand">' + chip('전체', '전체', true) + brands.map(b => chip(b.name, b.name, false)).join('') + '</div></div></div>\n</div>\n' +
+    '<section class="listing"><div class="in"><div class="sec-top"><h2>인기 순</h2><span class="count" id="count" aria-live="polite">' + items.length + '개 상품</span></div>\n' +
+    '<p class="note">' + NOTE + '</p>\n' +
+    '<ul class="rows" id="beans">' + sorted.map(it => row(it, P)).join('\n') + '</ul>\n' +
+    '<p class="empty" id="empty" hidden>조건에 맞는 상품이 없습니다. 검색어나 필터를 바꿔 보세요.</p></div></section>\n</div>\n</main>';
   return layout({
     P, urlPath: '/beans/', title: '전체 원두·드립백 ' + items.length + '종 비교 | ' + site.name,
     desc: trunc('브랜드, 형태, 로스팅 단계로 ' + items.length + '종의 원두·드립백·콜드브루를 검색하고 정렬해 비교합니다. 후기가 많은 순으로 보여 드립니다.', 160),
@@ -652,10 +725,10 @@ function brandPage(b) {
   const intro = (b.intro ? esc(b.intro) + ' ' : '') + esc(auto);
   const others = brands.filter(x => x.name !== b.name);
   const body = '<main>\n' + crumbs(P, [{ label: b.name }]) +
-    '\n<section class="phead"><p class="eyebrow">Brand</p><div class="bhero">' + logoHtml(b, P, 'lg', false) + '<h1 class="page-title" style="margin:0">' + esc(b.name) + ' ' + esc(formsText) + '</h1></div><p class="lead" style="margin-bottom:0">' + intro + '</p></section>\n' +
-    '<section class="tight" style="border-top:0;padding-top:8px"><p class="count">' + list.length + '개 상품 · 후기가 많은 순</p><p class="note">인기 순위는 마켓컬리 후기 수 기준이며 맛 평가가 아닙니다 · ' + esc(UPDATED) + ' 확인</p>' +
-    '<div class="list">' + list.map(it => row(it, P)).join('\n') + '</div>' + legend() + '</section>\n' +
-    '<section class="tight"><p class="eyebrow">Other Brands</p><div class="chips">' + others.map(o => '<a class="chip" href="' + P + 'brands/' + o.slug + '/">' + esc(o.name) + '</a>').join('') + '</div></section>\n</main>';
+    '\n<section class="phead"><div class="in"><p class="eyebrow">Brand</p><div class="bhero">' + logoHtml(b, P, 'lg', false) + '<h1 class="page-title">' + esc(b.name) + ' ' + esc(formsText) + '</h1></div><p class="lead" style="margin-bottom:0">' + intro + '</p></div></section>\n' +
+    '<section class="listing"><div class="in" style="padding-top:8px"><div class="sec-top"><h2>후기가 많은 순</h2><span class="count">' + list.length + '개 상품</span></div><p class="note">' + NOTE + '</p>' +
+    '<ul class="rows nonum">' + list.map(it => row(it, P)).join('\n') + '</ul></div></section>\n' +
+    '<section class="tight"><div class="in"><p class="eyebrow">Other Brands</p><div class="chips">' + others.map(o => '<a class="chip" href="' + P + 'brands/' + o.slug + '/">' + esc(o.name) + '</a>').join('') + '</div></div></section>\n</main>';
   return layout({
     P, urlPath: brandUrl(b.name), title: b.name + ' ' + formsText + ' 컵노트·로스팅·구매처 | ' + site.name,
     desc: trunc(b.name + ' ' + formsText + ' ' + list.length + '종: ' + list.slice(0, 3).map(it => it.name).join(', ') + ' 등의 컵 노트와 로스팅 단계를 비교하고 구매처로 연결합니다.', 160),
@@ -671,27 +744,29 @@ function beanPage(it) {
     esc(it.brand + ' ' + it.name + ' ' + it.form + '(' + it.size + ')의 컵 노트와 로스팅 정보입니다. 컵 노트는 ' + it.notes + '.');
   const rv = it.reviews == null ? '정보 없음' : fmt(it.reviews) + '건 · 마켓컬리';
   const guide = (it.roast > 0
-    ? '<p>로스팅 단계는 ' + esc(it.roastLabel) + '로 표기되어 있습니다. ' + esc(ROAST_TIP[it.roast]) + ' 물 온도는 일반적인 가이드이며, 로스터의 안내가 있으면 그쪽을 따르세요.</p>'
-    : '<p>이 상품은 판매처 페이지에 로스팅 단계가 표기되어 있지 않습니다. 구매 전에 판매처의 상품 설명을 확인하세요.</p>') +
+    ? '<p>로스팅 단계는 ' + esc(it.roastLabel || ROAST_NAMES[it.roast - 1]) + '로 표기되어 있습니다. ' + esc(ROAST_TIP[it.roast]) + ' 물 온도는 일반적인 가이드이며, 로스터의 안내가 있으면 그쪽을 따르세요.</p>'
+    : '<p>이 상품은 판매처 페이지에 로스팅 단계가 표기되어 있지 않아 \'그 외\'로 분류했습니다. 구매 전에 판매처의 상품 설명을 확인하세요.</p>') +
     (FORM_TEXT[it.form] ? '<p>' + esc(it.form) + ': ' + esc(FORM_TEXT[it.form]) + '</p>' : '');
   const sameBrand = itemsOf(it.brand).filter(x => x.slug !== it.slug).slice(0, 4);
   const sameForm = sorted.filter(x => x.form === it.form && x.brand !== it.brand).slice(0, 3);
   const body = '<main>\n' + crumbs(P, [{ label: it.brand, href: P + 'brands/' + b.slug + '/' }, { label: it.name }]) +
-    '\n<div class="detail"><div><p class="eyebrow">' + esc(it.brand) + ' · ' + esc(it.form) + '</p><h1 class="page-title">' + esc(it.name) + '</h1>' + popHtml(it) +
-    '<p class="lead">' + lead + '</p>' +
-    '<div class="actions"><a class="btn" href="' + esc(buyUrl(it)) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a><a class="btn ghost" href="' + P + 'brands/' + b.slug + '/">' + esc(it.brand) + ' 전체 보기</a></div>' +
+    '\n<div class="in"><div class="dpage"><div><div class="d-id">' + logoHtml(b, P, 'lg', false) + '<div style="min-width:0"><a class="d-brand" href="' + P + 'brands/' + b.slug + '/">' + esc(it.brand) + '</a><p class="eyebrow" style="margin:2px 0 0">' + esc(it.form) + '</p></div></div>' +
+    '<h1 class="d-name">' + esc(it.name) + '</h1>' +
+    '<p class="lead" style="margin-top:16px">' + lead + '</p>' +
+    '<div class="actions"><a class="cta2" href="' + esc(buyUrl(it)) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a><a class="ghost" href="' + P + 'brands/' + b.slug + '/">' + esc(it.brand) + ' 전체 보기</a></div>' +
     (site.affiliate ? '<p class="note" style="margin-top:10px">제휴 링크 포함</p>' : '') + '</div>\n' +
-    '<div class="sheet"><div class="head"><small>Bean Sheet</small>' + esc(it.name) + '</div>' +
-    '<div class="row"><span>브랜드</span><span>' + esc(it.brand) + '</span></div>' +
-    '<div class="row"><span>형태</span><span>' + esc(it.form) + ' ' + esc(it.size) + '</span></div>' +
-    '<div class="row"><span>로스팅</span><span class="rr">' + roastHtml(it) + '</span></div>' +
-    '<div class="row"><span>컵 노트</span><span>' + esc(it.notes) + '</span></div>' +
-    '<div class="row"><span>후기</span><span>' + esc(rv) + '</span></div></div></div>\n' +
-    '<section class="tight"><h2>로스팅과 추출 가이드</h2><div class="prose">' + guide + '</div></section>\n' +
-    (sameBrand.length ? '<section class="tight"><h2>' + esc(it.brand) + '의 다른 상품</h2><div class="list">' + sameBrand.map(x => row(x, P)).join('\n') + '</div></section>\n' : '') +
-    (sameForm.length ? '<section class="tight"><h2>다른 브랜드의 ' + esc(it.form) + '</h2><div class="list">' + sameForm.map(x => row(x, P)).join('\n') + '</div></section>\n' : '') +
+    '<div class="sheet">' +
+    '<div class="r"><span>브랜드</span><span><b>' + esc(it.brand) + '</b></span></div>' +
+    '<div class="r"><span>형태</span><span>' + esc((it.form + ' ' + it.size).trim()) + '</span></div>' +
+    '<div class="r"><span>로스팅</span><span>' + roastHtml(it) + '</span></div>' +
+    '<div class="r"><span>컵 노트</span><span>' + esc(it.notes) + '</span></div>' +
+    (it.rank != null ? '<div class="r"><span>인기 순위</span><span>' + it.rank + '위</span></div>' : '') +
+    '<div class="r"><span>후기</span><span>' + esc(rv) + '</span></div></div></div></div>\n' +
+    '<section class="tight"><div class="in"><h2>로스팅과 추출 가이드</h2><div class="prose">' + guide + '</div></div></section>\n' +
+    (sameBrand.length ? '<section class="tight"><div class="in"><h2>' + esc(it.brand) + '의 다른 상품</h2><ul class="rows nonum">' + sameBrand.map(x => row(x, P)).join('\n') + '</ul></div></section>\n' : '') +
+    (sameForm.length ? '<section class="tight"><div class="in"><h2>다른 브랜드의 ' + esc(it.form) + '</h2><ul class="rows nonum">' + sameForm.map(x => row(x, P)).join('\n') + '</ul></div></section>\n' : '') +
     '</main>';
-  const descTxt = it.brand + ' ' + it.name + ' ' + it.form + ' ' + it.size + '. 컵 노트: ' + it.notes + '.' + (it.roast > 0 ? ' 로스팅: ' + it.roastLabel + '.' : '') + (it.reviews != null ? ' 판매처 후기 ' + fmt(it.reviews) + '건.' : '');
+  const descTxt = it.brand + ' ' + it.name + ' ' + it.form + ' ' + it.size + '. 컵 노트: ' + it.notes + '.' + (it.roast > 0 ? ' 로스팅: ' + (it.roastLabel || ROAST_NAMES[it.roast - 1]) + '.' : '') + (it.reviews != null ? ' 판매처 후기 ' + fmt(it.reviews) + '건.' : '');
   return layout({
     P, urlPath: beanUrl(it), title: it.brand + ' ' + it.name + ' ' + it.form + ' 컵노트·로스팅 | ' + site.name,
     desc: trunc(it.description || descTxt, 160), body,
@@ -722,7 +797,7 @@ write('404.html', '<!doctype html>\n<html lang="ko"><head><meta charset="utf-8">
   '<title>페이지를 찾을 수 없습니다 | ' + esc(site.name) + '</title><meta name="robots" content="noindex">' +
   '<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">' +
   '<link rel="stylesheet" href="' + BASE + '/style.css"></head>' +
-  '<body><div class="wrap"><section class="phead"><p class="eyebrow">404</p><h1 class="page-title">페이지를 찾을 수 없습니다</h1>' +
-  '<p class="lead">주소가 바뀌었거나 없는 페이지입니다.</p><div class="actions"><a class="btn" href="' + BASE + '/">홈으로</a></div></section></div></body></html>\n');
+  '<body><div class="in"><section class="phead" style="padding-top:64px"><p class="eyebrow">404</p><h1 class="page-title">페이지를 찾을 수 없습니다</h1>' +
+  '<p class="lead">주소가 바뀌었거나 없는 페이지입니다.</p><div class="actions"><a class="cta2" href="' + BASE + '/">홈으로</a></div></section></div></body></html>\n');
 
 console.log('빌드 완료: 홈 1, 전체 목록 1, 브랜드 ' + brands.length + ', 원두 ' + items.length + ' 페이지 → dist/');
