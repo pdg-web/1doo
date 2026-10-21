@@ -162,6 +162,17 @@ section.tight h2 { margin-bottom: 20px; }
 .count { font-size: 0.82rem; color: var(--muted); margin: 0 0 4px; }
 .empty { padding: 28px 0; color: var(--muted); border-bottom: 1px solid var(--line); }
 
+/* 브랜드 로고 */
+.logo { display: inline-flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; flex: none; }
+.logo img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.logo.lg { height: 88px; min-width: 88px; max-width: 240px; padding: 14px 18px; }
+.logo.sm { height: 36px; min-width: 36px; max-width: 110px; padding: 5px 8px; border-radius: 8px; }
+.logo.mono { background: var(--surface); color: var(--muted); font-weight: 700; padding: 0; }
+.logo.mono.lg { font-size: 2.1rem; }
+.logo.mono.sm { font-size: 1rem; }
+.bhero { display: flex; align-items: center; gap: 20px; margin-bottom: 18px; flex-wrap: wrap; }
+.bhead { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
 /* 브랜드 카드 */
 .brands { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .bcard { display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); text-decoration: none; min-width: 0; }
@@ -374,6 +385,15 @@ brands.forEach((b, i) => {
   if (brandSlugs.has(b.slug)) fail('브랜드 slug 가 중복되었습니다: ' + b.slug);
   brandByName.set(b.name, b);
   brandSlugs.add(b.slug);
+  // 로고는 저장소 안의 이미지 파일 경로만 허용합니다. 예: logos/fritz.png (파일이 없으면 글자 배지로 대신 표시)
+  b.logoPath = null;
+  if (b.logo) {
+    const lp = String(b.logo);
+    if (!/^[A-Za-z0-9._\-\/]+$/.test(lp) || lp.includes('..') || lp.startsWith('/')) fail('브랜드 "' + b.name + '" 의 logo 경로가 올바르지 않습니다. 예: logos/fritz.png');
+    if (!/\.(png|jpe?g|webp|svg|gif)$/i.test(lp)) fail('브랜드 "' + b.name + '" 의 logo 는 png, jpg, webp, svg, gif 파일이어야 합니다: ' + lp);
+    if (fs.existsSync(path.join(ROOT, lp))) b.logoPath = lp;
+    else console.warn('[알림] 브랜드 "' + b.name + '" 의 로고 파일을 찾지 못해 글자 배지로 표시합니다: ' + lp);
+  }
 });
 
 const itemSlugs = new Set();
@@ -405,6 +425,13 @@ const itemsOf = brand => sorted.filter(it => it.brand === brand);
 const brandUrl = b => '/brands/' + brandByName.get(b).slug + '/';
 const beanUrl = it => '/beans/' + it.slug + '/';
 
+// 로고: 파일이 있으면 이미지, 없으면 브랜드 이름 첫 글자 배지. 다크 모드에서도 보이도록 밝은 판 위에 올립니다.
+function logoHtml(b, P, size, decorative) {
+  if (b.logoPath) {
+    return '<span class="logo ' + size + '"><img src="' + P + esc(b.logoPath) + '" alt="' + (decorative ? '' : esc(b.name) + ' 로고') + '" loading="lazy" decoding="async"></span>';
+  }
+  return '<span class="logo mono ' + size + '" aria-hidden="true">' + esc(Array.from(b.name)[0]) + '</span>';
+}
 function swatch(it) { return '<span class="sw r' + (it.roast > 0 ? it.roast : 0) + '" aria-hidden="true"></span>'; }
 function rbar(roast) {
   let d = '';
@@ -535,7 +562,7 @@ function homePage() {
     const list = itemsOf(b.name);
     if (!list.length) return '';
     const fs_ = forms.filter(f => list.some(it => it.form === f)).join('·');
-    return '<a class="bcard" href="brands/' + b.slug + '/"><b>' + esc(b.name) + '</b><span class="meta">' + list.length + '종 · ' + esc(fs_) + '</span>' +
+    return '<a class="bcard" href="brands/' + b.slug + '/"><span class="bhead">' + logoHtml(b, '', 'sm', true) + '<b>' + esc(b.name) + '</b></span><span class="meta">' + list.length + '종 · ' + esc(fs_) + '</span>' +
       (list.some(it => it.roast > 0) ? '<span class="sws" aria-hidden="true">' + list.filter(it => it.roast > 0).map(swatch).join('') + '</span>' : '<span class="meta">로스팅 미표기</span>') + '<p class="bn">' + esc(list[0].notes) + '</p></a>';
   }).join('');
 
@@ -618,7 +645,7 @@ function brandPage(b) {
   const intro = (b.intro ? esc(b.intro) + ' ' : '') + esc(auto);
   const others = brands.filter(x => x.name !== b.name);
   const body = '<main>\n' + crumbs(P, [{ label: b.name }]) +
-    '\n<section class="phead"><p class="eyebrow">Brand</p><h1 class="page-title">' + esc(b.name) + ' ' + esc(formsText) + '</h1><p class="lead" style="margin-bottom:0">' + intro + '</p></section>\n' +
+    '\n<section class="phead"><p class="eyebrow">Brand</p><div class="bhero">' + logoHtml(b, P, 'lg', false) + '<h1 class="page-title" style="margin:0">' + esc(b.name) + ' ' + esc(formsText) + '</h1></div><p class="lead" style="margin-bottom:0">' + intro + '</p></section>\n' +
     '<section class="tight" style="border-top:0;padding-top:8px"><p class="count">' + list.length + '개 상품 · 후기가 많은 순</p><p class="note">인기 순위는 마켓컬리 후기 수 기준이며 맛 평가가 아닙니다 · ' + esc(UPDATED) + ' 확인</p>' +
     '<div class="list">' + list.map(it => row(it, P)).join('\n') + '</div>' + legend() + '</section>\n' +
     '<section class="tight"><p class="eyebrow">Other Brands</p><div class="chips">' + others.map(o => '<a class="chip" href="' + P + 'brands/' + o.slug + '/">' + esc(o.name) + '</a>').join('') + '</div></section>\n</main>';
@@ -671,6 +698,12 @@ write('index.html', homePage());
 write('beans/index.html', listPage());
 brands.forEach(b => { if (items.some(it => it.brand === b.name)) write('brands/' + b.slug + '/index.html', brandPage(b)); });
 items.forEach(it => write('beans/' + it.slug + '/index.html', beanPage(it)));
+brands.forEach(b => {
+  if (!b.logoPath) return;
+  const dest = path.join(OUT, b.logoPath);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(path.join(ROOT, b.logoPath), dest);
+});
 write('style.css', CSS);
 write('app.js', APPJS);
 

@@ -4,7 +4,7 @@
     "쉼표(,)와 따옴표(\"), 중괄호({ })를 지우지 않게 주의하세요. 형식이 틀리면 사이트가 갱신되지 않고 GitHub의 Actions 탭에 오류가 표시됩니다.",
     "site.url: 사이트 주소입니다. 나중에 .com 도메인을 연결하면 이 주소를 새 도메인으로 바꾸세요. 맨 끝에 /를 붙이지 않습니다.",
     "site.affiliate: 구매 링크에 판매 수수료를 받는 제휴 링크를 쓰면 true로 바꾸세요. true이면 구매 버튼 옆에 \"제휴 링크 포함\"이 표시되고 푸터 안내문도 바뀝니다. 제휴 링크가 없으면 false로 둡니다.",
-    "brands: name은 상품의 brand와 똑같이 써야 합니다. slug는 주소에 쓰이는 영문 소문자/숫자/하이픈이며 한번 정하면 바꾸지 않는 것이 좋습니다. intro는 브랜드 페이지에 보일 소개 글(선택)입니다.",
+    "brands: name은 상품의 brand와 똑같이 써야 합니다. slug는 주소에 쓰이는 영문 소문자/숫자/하이픈이며 한번 정하면 바꾸지 않는 것이 좋습니다. intro는 브랜드 페이지에 보일 소개 글(선택)입니다. logo: 브랜드 로고 이미지 경로입니다(예: logos/fritz.png). 이미지는 저장소의 logos 폴더에 올리고, 비워 두면 이름 첫 글자 배지가 표시됩니다. 로고 사용 허락은 각 브랜드에 직접 확인하세요.",
     "items: 상품 하나입니다. 항목을 복사해 붙이면 상품이 추가되고, 지우면 사라집니다. slug는 상품 주소(예: fritz-old-dog)이며 다른 상품과 겹치면 안 됩니다.",
     "form: 원두, 드립백, 캡슐, 콜드브루, 디카페인 중 하나입니다. 새 형태를 쓰려면 forms에도 추가하세요.",
     "roast: 로스팅 단계 1(라이트)~5(다크), 모르면 0. roastLabel: 화면에 보일 문구입니다. 상품 옆 색 점과 막대는 이 단계에 따라 정해집니다.",
@@ -30,42 +30,50 @@
     {
       "name": "커피리브레",
       "slug": "coffee-libre",
-      "intro": ""
+      "intro": "",
+      "logo": "coffee-libre.png"
     },
     {
       "name": "모모스커피",
       "slug": "momos-coffee",
-      "intro": ""
+      "intro": "",
+      "logo": "momos-coffee.png"
     },
     {
       "name": "프릳츠",
       "slug": "fritz",
-      "intro": ""
+      "intro": "",
+      "logo": "fritz.png"
     },
     {
       "name": "나무사이로",
       "slug": "namusairo",
-      "intro": ""
+      "intro": "",
+      "logo": "namusairo.png"
     },
     {
       "name": "센터커피",
       "slug": "center-coffee",
-      "intro": ""
+      "intro": "",
+      "logo": "center-coffee.png"
     },
     {
       "name": "테라로사",
       "slug": "terarosa",
-      "intro": ""
+      "intro": "",
+      "logo": "terarosa.png"
     },
     {
       "name": "앤트러사이트",
       "slug": "anthracite",
-      "intro": ""
+      "intro": "",
+      "logo": "anthracite.png"
     },
     {
       "name": "빈브라더스",
       "slug": "bean-brothers",
-      "intro": ""
+      "intro": "",
+      "logo": "bean-brothers.svg"
     }
   ],
   "gear": [
