@@ -1,30 +1,29 @@
 {
   "_readme": [
-    "이 파일(products.json)만 고치면 홈, 전체 원두, 브랜드별 페이지, 원두별 페이지가 모두 자동으로 다시 만들어집니다. 저장하고 1~3분 기다리면 사이트에 반영됩니다.",
+    "이 파일(products.json)만 고치면 홈, 브랜드별 페이지, 원두별 페이지가 모두 자동으로 다시 만들어집니다. 저장하고 1~3분 기다리면 사이트에 반영됩니다.",
     "쉼표(,)와 따옴표(\"), 중괄호({ })를 지우지 않게 주의하세요. 형식이 틀리면 사이트가 갱신되지 않고 GitHub의 Actions 탭에 오류가 표시됩니다.",
-    "site.url: 사이트 주소입니다. 나중에 .com 도메인을 연결하면 이 주소를 새 도메인으로 바꾸세요. 맨 끝에 /를 붙이지 않습니다.",
-    "site.affiliate: 구매 링크에 판매 수수료를 받는 제휴 링크를 쓰면 true로 바꾸세요. true이면 구매 버튼 옆에 \"제휴 링크 포함\"이 표시되고 푸터 안내문도 바뀝니다. 제휴 링크가 없으면 false로 둡니다.",
-    "brands: name은 상품의 brand와 똑같이 써야 합니다. slug는 주소에 쓰이는 영문 소문자/숫자/하이픈이며 한번 정하면 바꾸지 않는 것이 좋습니다. intro는 브랜드 페이지에 보일 소개 글(선택)입니다. logo: 브랜드 로고 이미지 경로입니다(예: logos/fritz.png). 이미지는 저장소의 logos 폴더에 올리고, 비워 두면 이름 첫 글자 배지가 표시됩니다. 로고 사용 허락은 각 브랜드에 직접 확인하세요. logoBg: 로고 뒤 판의 색입니다. 비우면 흰색이고, 흰색이나 밝은색 로고는 \"dark\"로 바꾸면 어두운 판 위에 올라갑니다. 다른 색은 #1c1b19 같은 색 코드로 지정합니다.",
+    "site.url: 사이트 주소입니다. 나중에 .com 도메인을 연결하면 이 주소를 새 도메인으로 바꾸세요. 맨 끝에 /를 붙이지 않습니다. site.affiliate: 제휴(쿠팡 파트너스 등) 링크를 쓰면 true 로 두세요. 안내 문구가 자동으로 표시됩니다.",
+    "forms: 원두, 드립백, 콜드브루, 캡슐 4가지 분류입니다. 이 순서가 목록의 형태 아이콘 표시 순서이며 모든 원두에 똑같이 적용됩니다. 순서를 바꾸려면 이 줄의 순서만 바꾸세요.",
+    "brands: name은 상품의 brand와 똑같이 써야 합니다. slug는 주소에 쓰이는 영문 소문자/숫자/하이픈이며 한번 정하면 바꾸지 않는 것이 좋습니다. intro는 브랜드 페이지에 보일 소개 글(선택)입니다. logo는 logos/slug.png 처럼 쓰고, logoBg는 비우면 흰색, \"dark\"면 어두운 판입니다.",
     "items: 상품 하나입니다. 항목을 복사해 붙이면 상품이 추가되고, 지우면 사라집니다. slug는 상품 주소(예: fritz-old-dog)이며 다른 상품과 겹치면 안 됩니다.",
-    "form: 원두, 드립백, 캡슐, 콜드브루, 디카페인 중 하나입니다. 새 형태를 쓰려면 forms에도 추가하세요.",
-    "roast: 로스팅 단계 1(라이트)~5(다크), 모르면 0. roastLabel: 화면에 보일 문구입니다. 상품 옆 색 점과 막대는 이 단계에 따라 정해집니다.",
-    "reviews: 판매처 후기 수입니다(모르면 null). 인기 순위와 정렬은 이 숫자로 자동 계산되며, 같은 후기 수는 같은 순위입니다.",
-    "url: 구매 링크입니다. 비워 두면 네이버 쇼핑 검색 결과로 연결됩니다. https:// 로 시작하는 주소만 사용됩니다.",
+    "options: 이 상품을 살 수 있는 형태별 정보입니다. \"원두\": { \"size\": \"200g\", \"url\": \"링크\" } 처럼 쓰고, 형태 이름은 forms 에 있는 것만 쓸 수 있습니다. 판매하는 형태만 적으면 해당 아이콘이 목록에 표시됩니다. url 을 비우면 상세 페이지에서 네이버 쇼핑 검색으로 연결됩니다. 구매 링크는 원두 상세 페이지에서만 나옵니다.",
+    "decaf: true 이면 디카페인 표시가 붙습니다(선택).",
+    "roast: 로스팅 단계 1(라이트)~5(다크), 모르면 0(\"그 외\"로 분류됩니다). roastLabel: 화면에 보일 문구입니다.",
+    "reviews: 판매처 후기 수입니다(모르면 null). 인기 순서는 이 숫자로 정해집니다.",
     "description: 상품 페이지 첫 문단에 보일 설명(선택)입니다. 직접 쓴 설명이 있으면 검색에도 도움이 됩니다.",
-    "featured: true인 상품이 홈 첫 화면의 \"오늘의 원두\" 슬라이드에 나옵니다."
+    "featured: true인 상품이 첫 화면 슬라이드에 나옵니다."
   ],
-  "updated": "2026-10-20",
+  "updated": "2026-10-23",
   "site": {
     "name": "원두노트",
     "url": "https://pdg-web.github.io/1doo",
-    "affiliate": false
+    "affiliate": true
   },
   "forms": [
     "원두",
     "드립백",
-    "캡슐",
     "콜드브루",
-    "디카페인"
+    "캡슐"
   ],
   "brands": [
     {
@@ -119,477 +118,620 @@
       "slug": "libre-bad-blood",
       "brand": "커피리브레",
       "name": "배드 블러드",
-      "form": "원두",
-      "size": "200g",
       "notes": "과일 시럽 같은 단맛",
       "roast": 2,
       "roastLabel": "중약배전",
       "reviews": 5229,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4WYStRjC8"
+        }
+      }
     },
     {
       "slug": "libre-no-surprise",
       "brand": "커피리브레",
       "name": "노 서프라이즈",
-      "form": "원두",
-      "size": "200g",
       "notes": "농밀한 과일의 단맛",
       "roast": 3,
       "roastLabel": "중배전",
       "reviews": 5229,
-      "url": "",
       "featured": true,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4W4xFYIPk"
+        }
+      }
     },
     {
       "slug": "libre-dark-libre",
       "brand": "커피리브레",
       "name": "다크 리브레",
-      "form": "원두",
-      "size": "200g",
       "notes": "다크 초콜릿, 견과의 고소함",
       "roast": 5,
       "roastLabel": "강배전",
       "reviews": 5229,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4W5MHKdRA"
+        }
+      }
     },
     {
       "slug": "momos-purple-aroma",
       "brand": "모모스커피",
       "name": "보랏빛 향기 블렌드",
-      "form": "원두",
-      "size": "200g",
       "notes": "라벤더, 포도, 자두주스, 카카오",
       "roast": 2,
       "roastLabel": "미디엄 라이트",
       "reviews": 248,
-      "url": "",
       "featured": true,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://www.kurly.com/goods/1001800235"
+        }
+      }
     },
     {
       "slug": "momos-s-chocolat",
       "brand": "모모스커피",
       "name": "에스 쇼콜라 블렌드",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "카카오, 헤이즐넛, 크리미한 질감",
       "roast": 5,
       "roastLabel": "강배전",
       "reviews": 5939,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4XwSgysJE"
+        }
+      }
     },
     {
       "slug": "momos-busan",
       "brand": "모모스커피",
       "name": "부산 블렌드",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "구운 피칸, 캐러멜 단맛, 약한 산미",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5939,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4XDo3qqya"
+        }
+      }
     },
     {
       "slug": "momos-fruity-bonbon",
       "brand": "모모스커피",
       "name": "프루티 봉봉 블렌드",
-      "form": "드립백",
-      "size": "12g x 7개",
       "notes": "오렌지, 시트러스, 캐러멜 단맛",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5939,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "12g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4XLH76ue4"
+        }
+      }
     },
     {
       "slug": "momos-mchoberry",
       "brand": "모모스커피",
       "name": "므쵸베리 블렌드",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "베리류, 초콜릿 같은 묵직한 단맛",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5939,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4XOPIZQwC"
+        }
+      }
     },
     {
       "slug": "momos-ethiopia-single",
       "brand": "모모스커피",
       "name": "에티오피아 싱글오리진",
-      "form": "드립백",
-      "size": "12g x 7개",
       "notes": "장미, 블루베리, 카카오닙스",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5939,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "12g x 7개",
+          "url": "https://link.coupang.com/a/h4YoZfjEbI"
+        }
+      }
     },
     {
       "slug": "fritz-old-dog",
       "brand": "프릳츠",
       "name": "올드독 블렌드",
-      "form": "원두",
-      "size": "200g",
       "notes": "다크 초콜릿, 흑설탕, 구운 피칸",
       "roast": 5,
       "roastLabel": "강배전",
       "reviews": 6615,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4WNNneAiy"
+        }
+      }
     },
     {
       "slug": "fritz-seoul-cinema",
       "brand": "프릳츠",
       "name": "서울 시네마 블렌드",
-      "form": "원두",
-      "size": "200g",
       "notes": "자두, 라즈베리, 레몬 껍질, 아쌈 티",
       "roast": 1,
       "roastLabel": "라이트",
       "reviews": 6615,
-      "url": "",
       "featured": true,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4WQZjlUia"
+        }
+      }
     },
     {
       "slug": "fritz-jal-doeeo-gasina",
       "brand": "프릳츠",
       "name": "잘 되어 가시나 블렌드",
-      "form": "원두",
-      "size": "200g",
       "notes": "말린 과일, 캐러멜, 유자 마멀레이드",
       "roast": 0,
       "roastLabel": "",
       "reviews": 6615,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h4WT0OxIqq"
+        }
+      }
     },
     {
       "slug": "namusairo-waikan",
       "brand": "나무사이로",
       "name": "와이칸",
-      "form": "원두",
-      "size": "200g",
       "notes": "바닐라, 베리, 깨끗하고 긴 여운",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5380,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "namusairo-brilly",
       "brand": "나무사이로",
       "name": "브릴리",
-      "form": "원두",
-      "size": "200g",
       "notes": "건과일, 고소한 견과류, 향신료, 누룽지 사탕",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5380,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "namusairo-singing-bird",
       "brand": "나무사이로",
       "name": "노래하는 새",
-      "form": "원두",
-      "size": "200g",
       "notes": "자스민, 파인애플, 딸기, 자두",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5380,
-      "url": "",
       "featured": true,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-icebreaker",
       "brand": "센터커피",
       "name": "아이스브레이커",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "사과, 자두, 마카다미아",
       "roast": 0,
       "roastLabel": "",
       "reviews": 1267,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-mayday",
       "brand": "센터커피",
       "name": "메이데이",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "복합적인 과일 풍미, 카라멜",
       "roast": 0,
       "roastLabel": "",
       "reviews": 1267,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-ethiopia-yirgacheffe-aricha",
       "brand": "센터커피",
       "name": "에티오피아 예가체프 아리차 워시드",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "탠저린, 레몬그라스, 아몬드",
       "roast": 0,
       "roastLabel": "",
       "reviews": 1267,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-colombia-mujeres-tolima",
       "brand": "센터커피",
       "name": "콜롬비아 무헤레스 톨리만 워시드",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "포도, 체리, 다크 초콜릿",
       "roast": 0,
       "roastLabel": "",
       "reviews": 1267,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-brazil-santa-ines",
       "brand": "센터커피",
       "name": "브라질 파젠다 산타 이네스 내추럴",
-      "form": "드립백",
-      "size": "10g x 7개",
       "notes": "오렌지, 마카다미아, 밀크 초콜릿",
       "roast": 0,
       "roastLabel": "",
       "reviews": 1267,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-friday-capsule",
       "brand": "센터커피",
       "name": "프라이데이 커피 캡슐",
-      "form": "캡슐",
-      "size": "10개입",
       "notes": "체리, 무화과, 흑설탕 (네스프레소 호환)",
       "roast": 0,
       "roastLabel": "",
       "reviews": 488,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "캡슐": {
+          "size": "10개입",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-geisha-cold-brew",
       "brand": "센터커피",
       "name": "게이샤 콜드브루",
-      "form": "콜드브루",
-      "size": "200mL",
       "notes": "살구, 청사과 산미, 밀크 초콜릿의 단맛",
       "roast": 0,
       "roastLabel": "",
       "reviews": 2031,
-      "url": "",
       "featured": true,
-      "description": ""
+      "description": "",
+      "options": {
+        "콜드브루": {
+          "size": "200mL",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "center-decaf-drip-bag",
       "brand": "센터커피",
       "name": "디카페인 드립백",
-      "form": "디카페인",
-      "size": "10g x 7개",
       "notes": "맛 설명 없음",
       "roast": 0,
       "roastLabel": "",
       "reviews": null,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "드립백": {
+          "size": "10g x 7개",
+          "url": ""
+        },
+        "원두": {
+          "size": "",
+          "url": ""
+        }
+      },
+      "decaf": true
     },
     {
       "slug": "terarosa-dawn-berry",
       "brand": "테라로사",
       "name": "던 베리 블렌드",
-      "form": "원두",
-      "size": "250g / 500g",
       "notes": "자두와 베리, 초콜릿의 단맛",
       "roast": 1,
       "roastLabel": "약배전",
       "reviews": 144,
-      "url": "",
       "featured": true,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "250g / 500g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "terarosa-gangneung",
       "brand": "테라로사",
       "name": "강릉 블렌드",
-      "form": "원두",
-      "size": "250g",
       "notes": "과일 같은 단맛과 산미, 쌉쌀하고 부드러운 향",
       "roast": 0,
       "roastLabel": "",
       "reviews": 247,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "250g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "terarosa-authentic-espresso",
       "brand": "테라로사",
       "name": "어센틱 에스프레소 블렌드",
-      "form": "원두",
-      "size": "250g",
       "notes": "사과 같은 상큼함, 달콤한 캐러멜",
       "roast": 0,
       "roastLabel": "",
       "reviews": 247,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "250g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "terarosa-house-drip",
       "brand": "테라로사",
       "name": "하우스 드립 블렌드",
-      "form": "원두",
-      "size": "250g",
       "notes": "과일의 단맛, 고소한 견과류, 깊은 향",
       "roast": 0,
       "roastLabel": "",
       "reviews": 247,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "250g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "anthracite-butter-fatrio",
       "brand": "앤트러사이트",
       "name": "버터 팻트리오",
-      "form": "원두",
-      "size": "200g",
       "notes": "볶은 견과, 스파이시, 다크 초콜릿",
       "roast": 0,
       "roastLabel": "",
       "reviews": 4068,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "anthracite-history-mystery",
       "brand": "앤트러사이트",
       "name": "히스토리 미스터리",
-      "form": "원두",
-      "size": "200g",
       "notes": "견과류, 브라운 슈가, 카카오",
       "roast": 0,
       "roastLabel": "",
       "reviews": 4068,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "anthracite-william-blake",
       "brand": "앤트러사이트",
       "name": "윌리엄 블레이크",
-      "form": "원두",
-      "size": "200g",
       "notes": "대추야자, 블랙커런트, 카카오닙",
       "roast": 0,
       "roastLabel": "",
       "reviews": 4068,
-      "url": "",
       "featured": false,
-      "description": ""
-    },
-    {
-      "slug": "bean-brothers-toast",
-      "brand": "빈브라더스",
-      "name": "토스트",
-      "form": "원두",
-      "size": "200g",
-      "notes": "곡물차 같은 고소한 향, 낮은 산미, 약간의 단맛",
-      "roast": 4,
-      "roastLabel": "중강배전",
-      "reviews": 3057,
-      "url": "",
-      "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": ""
+        }
+      }
     },
     {
       "slug": "bean-brothers-decaf",
       "brand": "빈브라더스",
       "name": "디카페인",
-      "form": "디카페인",
-      "size": "200g",
       "notes": "황설탕, 포도, 호두",
       "roast": 4,
       "roastLabel": "중강배전",
       "reviews": 78,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "200g",
+          "url": "https://link.coupang.com/a/h41ISHKM5Q"
+        }
+      },
+      "decaf": true
     },
     {
-      "slug": "bean-brothers-cold-brew-velvet-white",
+      "slug": "bean-brothers-velvet-white",
       "brand": "빈브라더스",
-      "name": "콜드브루 벨벳 화이트",
-      "form": "콜드브루",
-      "size": "500mL",
+      "name": "벨벳 화이트",
       "notes": "쥬시, 시트러스, 플로럴",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5938,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "",
+          "url": "https://link.coupang.com/a/h41wHwm3YO"
+        },
+        "콜드브루": {
+          "size": "500mL",
+          "url": ""
+        }
+      }
     },
     {
-      "slug": "bean-brothers-cold-brew-black-suit",
+      "slug": "bean-brothers-black-suit",
       "brand": "빈브라더스",
-      "name": "콜드브루 블랙 수트",
-      "form": "콜드브루",
-      "size": "500mL",
+      "name": "블랙 수트",
       "notes": "달콤함, 복합적인 풍미, 초콜릿",
       "roast": 0,
       "roastLabel": "",
       "reviews": 5938,
-      "url": "",
       "featured": false,
-      "description": ""
+      "description": "",
+      "options": {
+        "원두": {
+          "size": "",
+          "url": "https://link.coupang.com/a/h41zupZLdA"
+        },
+        "콜드브루": {
+          "size": "500mL",
+          "url": ""
+        }
+      }
     }
   ]
 }

@@ -123,9 +123,9 @@ h2 { font-weight: 800; font-size: clamp(1.5rem, 3.4vw, 2.1rem); letter-spacing: 
 @keyframes fade { from { opacity: 0.2; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .item { border-bottom: 1px solid var(--line); }
 .item.late { display: none; }
-.row { position: relative; display: grid; grid-template-columns: 56px minmax(0, 2fr) minmax(0, 1.3fr) 140px 92px 92px; grid-template-areas: "no main notes roast rv buy"; gap: 6px 20px; align-items: center; padding: 20px 0; }
+.row { position: relative; display: grid; grid-template-columns: 56px minmax(0, 2fr) minmax(0, 1.3fr) 140px 92px 150px; grid-template-areas: "no main notes roast rv buy"; gap: 6px 20px; align-items: center; padding: 20px 0; }
 .row:hover { background: var(--surface); box-shadow: -12px 0 0 var(--surface), 12px 0 0 var(--surface); }
-.rows.nonum .row { grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) 140px 92px 92px; grid-template-areas: "main notes roast rv buy"; }
+.rows.nonum .row { grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) 140px 92px 150px; grid-template-areas: "main notes roast rv buy"; }
 .rows.nonum .no { display: none; }
 .no { grid-area: no; font-weight: 900; font-size: 2.4rem; line-height: 1; letter-spacing: -0.03em; color: var(--muted); opacity: 0.55; }
 .row.top .no { color: var(--fg); opacity: 1; }
@@ -268,7 +268,27 @@ footer .flinks a:hover { color: var(--fg); }
 @media (prefers-reduced-motion: no-preference) { .blk { transition: transform .15s, opacity .2s; } .blk:hover { transform: translateY(-3px); } .cta, .cta2, .buy, .more, .chip, .bcard, .ghost { transition: filter .15s, border-color .15s, background-color .15s, color .15s; } }
 .grow .buyc { grid-area: auto; }
 button.blk { border: 0; font: inherit; text-align: left; cursor: pointer; }
-.blk > span:first-child { display: block; }`;
+.blk > span:first-child { display: block; }
+
+/* 형태 아이콘과 구매 영역 */
+.row .buyc { pointer-events: none; z-index: 0; align-items: flex-end; gap: 6px; }
+.fis { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; color: var(--fg); }
+.fi { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.fi.dc { width: auto; padding: 0 8px; font-size: 0.72rem; font-weight: 700; color: var(--muted); }
+.ic { width: 20px; height: 20px; display: block; flex: none; }
+.go { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.row:hover .go { color: var(--fg); }
+.flegend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+.fl { display: inline-flex; align-items: center; gap: 5px; color: var(--fg); }
+.fl .ic { width: 16px; height: 16px; }
+.buybox { margin-top: 26px; max-width: 520px; }
+.buylist { list-style: none; margin: 0 0 12px; padding: 0; border-top: 3px solid var(--fg); }
+.buylist li { display: flex; justify-content: space-between; align-items: center; gap: 12px 16px; padding: 14px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.bf { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.bf .ic { width: 28px; height: 28px; }
+.bf b { display: block; font-weight: 800; line-height: 1.3; }
+.bf small { display: block; color: var(--muted); font-size: 0.8rem; }
+@media (max-width: 760px) { .row .buyc { align-items: flex-end; } .fi { width: 30px; height: 30px; } }`;
 const APPJS = String.raw`(function () {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var each = function (list, fn) { Array.prototype.forEach.call(list, fn); };
@@ -342,7 +362,7 @@ const APPJS = String.raw`(function () {
       var term = st.q.trim().toLowerCase();
       var shown = [];
       rows.forEach(function (r) {
-        var ok = (st.form === '전체' || r.getAttribute('data-form') === st.form) &&
+        var ok = (st.form === '전체' || (' ' + r.getAttribute('data-forms') + ' ').indexOf(' ' + st.form + ' ') > -1) &&
                  (st.brand === '전체' || r.getAttribute('data-brand') === st.brand) &&
                  (st.roast === '전체' || (st.roast === '0' ? !(num(r, 'data-roast') > 0) : num(r, 'data-roast') === parseInt(st.roast, 10))) &&
                  (!term || r.getAttribute('data-search').indexOf(term) > -1);
@@ -457,6 +477,8 @@ brands.forEach((b, i) => {
   }
 });
 
+const FORMS = data.forms || [];
+if (!FORMS.length) fail('forms 가 비어 있습니다. 예: ["원두", "드립백", "콜드브루", "캡슐"] (아이콘 표시 순서이기도 합니다)');
 const itemSlugs = new Set();
 const items = (data.items || []).map((it, i) => {
   const label = '상품 ' + (i + 1) + (it && it.name ? ' (' + it.name + ')' : '');
@@ -465,11 +487,22 @@ const items = (data.items || []).map((it, i) => {
   if (!SLUG.test(it.slug || '')) fail(label + ': slug 는 영문 소문자, 숫자, 하이픈만 쓸 수 있습니다. 예: fritz-old-dog');
   if (itemSlugs.has(it.slug)) fail(label + ': slug 가 다른 상품과 중복됩니다: ' + it.slug);
   itemSlugs.add(it.slug);
-  return Object.assign({ notes: '', roast: 0, roastLabel: '', reviews: null, url: '', featured: false, description: '', size: '', form: '원두' }, it, { i });
+  const o = Object.assign({ notes: '', roast: 0, roastLabel: '', reviews: null, featured: false, description: '', decaf: false }, it, { i });
+  // options: 이 상품을 살 수 있는 형태(원두, 드립백, 콜드브루, 캡슐)별 용량과 구매 링크. forms 에 적힌 순서대로 정렬됩니다.
+  const opt = it.options;
+  if (!opt || typeof opt !== 'object' || !Object.keys(opt).length) fail(label + ': options 가 비어 있습니다. 예: "options": { "원두": { "size": "200g", "url": "" } }');
+  Object.keys(opt).forEach(k => {
+    if (!FORMS.includes(k)) fail(label + ': options 의 "' + k + '" 는 forms 목록(' + FORMS.join(', ') + ')에 없는 형태입니다.');
+    const u = (opt[k] && opt[k].url) || '';
+    if (u && !/^https?:\/\//.test(u)) fail(label + ': ' + k + ' 의 url 은 https:// 로 시작해야 합니다.');
+  });
+  o.opts = FORMS.filter(f => opt[f]).map(f => ({ form: f, size: String(opt[f].size || ''), url: String(opt[f].url || '') }));
+  return o;
 });
 if (!items.length) fail('items 가 비어 있습니다.');
 
-const forms = (data.forms || []).filter(f => items.some(it => it.form === f));
+const hasForm = (it, f) => it.opts.some(o => o.form === f);
+const forms = FORMS.filter(f => items.some(it => hasForm(it, f)));
 
 // ---------- 공통 도우미 ----------
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -506,12 +539,39 @@ function roastHtml(it) {
   return bars(it.roast) + '<span class="rlabel">' + esc(it.roastLabel || ROAST_NAMES[it.roast - 1]) + '</span>';
 }
 function rvText(it) { return it.reviews == null ? '후기 정보 없음' : '후기 ' + fmt(it.reviews) + '건'; }
-function buyUrl(it) {
-  if (/^https?:\/\//.test(it.url || '')) return it.url;
-  const q = it.brand + ' ' + it.name + (it.form === '원두' ? ' 원두' : ' ' + it.form);
+function sellerOf(o) {
+  if (!o.url) return '';
+  if (/coupang\.com/.test(o.url)) return '쿠팡';
+  if (/kurly\.com/.test(o.url)) return '마켓컬리';
+  return '판매처';
+}
+function buyUrl(it, o) {
+  if (o.url) return o.url;
+  const q = it.brand + ' ' + it.name + ' ' + (o.form === '원두' ? '원두' : o.form);
   return 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(q);
 }
 const affLabel = () => (site.affiliate ? '<span class="aff">제휴 링크 포함</span>' : '');
+const hasCoupang = items.some(it => it.opts.some(o => /coupang\.com/.test(o.url)));
+const COUPANG_NOTICE = '이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.';
+// 형태 아이콘 (아이콘 순서는 products.json 의 forms 순서입니다)
+const ICON = {
+  '원두': '<g transform="rotate(35 12 12)"><ellipse cx="12" cy="12" rx="6" ry="9"/><path d="M12 3c-3 3-3 6 0 9s3 6 0 9"/></g>',
+  '드립백': '<path d="M8 3h8v8H8z"/><path d="M5.5 5.5H8M16 5.5h2.5"/><path d="M5 13h14l-1.4 7.5h-11.2z"/>',
+  '콜드브루': '<path d="M10 2.5h4V6l2 2.5V20a1.8 1.8 0 0 1-1.8 1.8H9.8A1.8 1.8 0 0 1 8 20V8.5L10 6z"/><path d="M8 13h8"/>',
+  '캡슐': '<path d="M4.5 8c0-2 3.4-3.2 7.5-3.2s7.500 1.200 7.500 3.200"/><path d="M4.5 8l1.700 11.200a2 2 0 0 0 2 1.800h7.600a2 2 0 0 0 2-1.800L19.500 8"/><path d="M4.500 8c0 2 3.400 3.200 7.500 3.200s7.500-1.200 7.500-3.200"/>'
+};
+function iconSvg(f) {
+  return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON[f] || '<circle cx="12" cy="12" r="7"/>') + '</svg>';
+}
+// 구매 가능한 형태를 아이콘으로 나열 (링크가 아닙니다)
+function formIcons(it) {
+  return '<span class="fis">' + it.opts.map(o => '<span class="fi" title="' + esc(o.form) + '">' + iconSvg(o.form) + '<span class="sr">' + esc(o.form) + '</span></span>').join('') + (it.decaf ? '<span class="fi dc" title="디카페인">디카</span>' : '') + '</span>';
+}
+function formLegend() {
+  return '<p class="note flegend">구매할 수 있는 형태: ' + forms.map(f => '<span class="fl">' + iconSvg(f) + esc(f) + '</span>').join('') + '</p>';
+}
+const metaText = it => it.opts.map(o => (o.form + ' ' + o.size).trim()).join(' · ') + (it.decaf ? ' · 디카페인' : '');
+const formsText = it => it.opts.map(o => o.form).join('·');
 
 const ROAST_TIP = {
   1: '산미와 향이 선명하게 나오는 편입니다. 핸드드립에서는 물 온도를 92~96°C로 비교적 높게 잡는 방법이 흔합니다.',
@@ -524,8 +584,7 @@ const FORM_TEXT = {
   '원두': '분쇄하지 않은 원두입니다. 핸드드립은 중간 굵기, 에스프레소 머신은 곱게 갈아 사용합니다.',
   '드립백': '분쇄된 원두가 든 필터를 컵에 걸고 뜨거운 물을 부어 마시는 형태라 별도 도구가 필요 없습니다.',
   '캡슐': '커피 머신에 넣어 추출하는 형태입니다. 사용하는 머신과 호환되는지 판매처 안내를 확인하세요.',
-  '콜드브루': '차갑게 우려낸 커피로 바로 마실 수 있는 형태입니다. 보관 방법과 유통기한은 판매처 안내를 확인하세요.',
-  '디카페인': '카페인을 줄인 커피입니다. 맛 설명과 로스팅 정보는 판매처 상품 페이지를 참고했습니다.'
+  '콜드브루': '차갑게 우려낸 커피로 바로 마실 수 있는 형태입니다. 보관 방법과 유통기한은 판매처 안내를 확인하세요.'
 };
 const ROAST_NAMES = ['라이트', '미디엄 라이트', '미디엄', '미디엄 다크', '다크'];
 const ROAST_BLOCKS = [
@@ -576,7 +635,7 @@ function footer(P) {
   return '<footer><div class="in"><div class="fin"><div><strong style="color:var(--fg);">' + esc(site.name) + '</strong></div><div>' +
     '<p>' + esc(site.name) + '는 제품을 직접 판매하지 않으며 외부 구매처로 연결하는 정보 서비스입니다. ' +
     (site.affiliate ? '구매처 링크에는 판매 수수료를 받는 제휴 링크가 포함되어 있으며, 해당 링크 옆에 표시합니다. ' : '') +
-    '가격, 재고, 배송과 교환은 각 구매처의 정책을 따릅니다. 상품 구성과 맛 설명은 판매처 정보를 참고한 것으로 시기에 따라 바뀔 수 있습니다.</p>' +
+    (hasCoupang ? COUPANG_NOTICE + ' ' : '') + '가격, 재고, 배송과 교환은 각 구매처의 정책을 따릅니다. 상품 구성과 맛 설명은 판매처 정보를 참고한 것으로 시기에 따라 바뀔 수 있습니다.</p>' +
     '<div class="flinks"><a href="' + P + 'beans/">전체 원두</a>' + brands.map(b => '<a href="' + P + 'brands/' + b.slug + '/">' + esc(b.name) + '</a>').join('') + '</div></div></div></div></footer>';
 }
 function crumbs(P, parts) {
@@ -593,16 +652,16 @@ function breadcrumbLd(parts) {
 // 상품 행: 로고와 브랜드명, 상품명을 크게 보여 주고 행을 누르면 상세 페이지로, 구매처 연결은 별도 링크입니다.
 function row(it, P) {
   const b = brandByName.get(it.brand);
-  const search = (it.name + ' ' + it.brand + ' ' + it.form + ' ' + it.notes).toLowerCase();
+  const search = (it.name + ' ' + it.brand + ' ' + formsText(it) + ' ' + (it.decaf ? '디카페인 ' : '') + it.notes).toLowerCase();
   const top = it.rank != null && it.rank <= 3;
-  return '<li class="item" data-i="' + it.i + '" data-brand="' + esc(it.brand) + '" data-form="' + esc(it.form) + '" data-reviews="' + (it.reviews == null ? -1 : it.reviews) + '" data-roast="' + it.roast + '" data-name="' + esc(it.name) + '" data-search="' + esc(search) + '">' +
+  return '<li class="item" data-i="' + it.i + '" data-brand="' + esc(it.brand) + '" data-forms="' + esc(it.opts.map(o => o.form).join(' ')) + '" data-reviews="' + (it.reviews == null ? -1 : it.reviews) + '" data-roast="' + it.roast + '" data-name="' + esc(it.name) + '" data-search="' + esc(search) + '">' +
     '<div class="row' + (top ? ' top' : '') + '"><span class="no" aria-hidden="true">' + (it.rank == null ? '–' : it.rank) + '</span>' +
     '<a class="open" href="' + P + 'beans/' + it.slug + '/">' + logoHtml(b, P, '', true) +
-    '<span class="txt"><span class="brandname">' + esc(it.brand) + '</span><span class="beanname">' + esc(it.name) + '</span><span class="meta">' + esc((it.form + ' ' + it.size).trim()) + '</span></span></a>' +
+    '<span class="txt"><span class="brandname">' + esc(it.brand) + '</span><span class="beanname">' + esc(it.name) + '</span><span class="meta">' + esc(metaText(it)) + '</span></span></a>' +
     '<p class="notes">' + esc(it.notes) + '</p>' +
     '<div class="roast">' + roastHtml(it) + '</div>' +
     '<span class="rv">' + (it.rank != null ? '<span class="sr">인기 ' + it.rank + '위, </span>' : '') + rvText(it) + '</span>' +
-    '<div class="buyc"><a class="buy" href="' + esc(buyUrl(it)) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a>' + affLabel() + '</div></div></li>';
+    '<div class="buyc">' + formIcons(it) + '<span class="go" aria-hidden="true">상세 보기 →</span></div></div></li>';
 }
 function write(rel, content) {
   const f = path.join(OUT, rel);
@@ -619,7 +678,7 @@ function homePage() {
     const br = brandByName.get(b.brand);
     return '<div class="slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' / ' + slides.length + '"' + (i ? ' aria-hidden="true"' : '') + '>' +
       '<div class="bsheet"><div class="head">' + logoHtml(br, P, 'xs', true) + '<div><small>Today\'s Bean</small><b>' + esc(b.brand) + '</b><a href="beans/' + b.slug + '/">' + esc(b.name) + '</a></div></div>' +
-      '<div class="r"><span>형태</span><span>' + esc((b.form + ' ' + b.size).trim()) + '</span></div>' +
+      '<div class="r"><span>형태</span><span>' + esc(metaText(b)) + '</span></div>' +
       '<div class="r"><span>로스팅</span><span>' + roastHtml(b) + '</span></div>' +
       '<div class="r"><span>컵 노트</span><span>' + esc(b.notes) + '</span></div>' +
       '<div class="r"><span>후기</span><span>' + (b.reviews == null ? '정보 없음' : esc(fmt(b.reviews) + '건 · 마켓컬리')) + '</span></div></div></div>';
@@ -646,11 +705,11 @@ function homePage() {
   const brandCards = brands.map(b => {
     const list = itemsOf(b.name);
     if (!list.length) return '';
-    const fs_ = forms.filter(f => list.some(it => it.form === f)).join('·');
+    const fs_ = forms.filter(f => list.some(it => hasForm(it, f))).join('·');
     return '<a class="bcard" href="brands/' + b.slug + '/"><span class="bh">' + logoHtml(b, '', '', true) + '<b>' + esc(b.name) + '</b></span><span class="m">' + list.length + '종 · ' + esc(fs_) + '</span><p class="bn">' + esc(list[0].notes) + '</p></a>';
   }).join('');
 
-  const formLinks = forms.map(f => '<a class="chip" href="beans/?form=' + encodeURIComponent(f) + '">' + esc(f) + ' ' + items.filter(it => it.form === f).length + '</a>').join('');
+  const formLinks = forms.map(f => '<a class="chip" href="beans/?form=' + encodeURIComponent(f) + '">' + esc(f) + ' ' + items.filter(it => hasForm(it, f)).length + '</a>').join('');
 
   const gear = (data.gear || []).map(g => {
     const href = /^https?:\/\//.test(g.url || '') ? g.url : 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(g.query || g.name);
@@ -661,7 +720,7 @@ function homePage() {
   const body = '<main id="top">\n' +
     '<section class="spec" id="roast"><div class="in"><div class="sec-top"><h2>로스팅으로 찾기</h2></div><div class="blocks">' + blocks(P, false) + '</div></div></section>\n' +
     '<section class="listing" id="popular"><div class="in"><div class="sec-top"><h2>인기 순</h2><a class="more2" href="beans/">전체 보기 →</a></div>' +
-    '<p class="note">' + NOTE + '</p><ul class="rows">' + popular.map(it => row(it, P)).join('\n') + '</ul></div></section>\n' +
+    '<p class="note">' + NOTE + '</p>' + formLegend() + '<ul class="rows">' + popular.map(it => row(it, P)).join('\n') + '</ul></div></section>\n' +
 
     '<section class="sec" id="brands"><div class="in"><div class="sec-head"><div><p class="eyebrow">Brands</p><h2>브랜드로 찾기</h2></div><p class="desc">브랜드를 고르면 그 브랜드의 원두만 모아 볼 수 있습니다.</p></div>\n' +
     '<div class="brands">' + brandCards + '</div>\n' +
@@ -701,7 +760,7 @@ function listPage() {
     '<div class="fgroup"><span class="flabel">형태</span><div class="chips" id="chips-form">' + chip('전체', '전체', true) + forms.map(f => chip(f, f, false)).join('') + '</div></div>\n' +
     '<div class="fgroup"><span class="flabel">브랜드</span><div class="chips" id="chips-brand">' + chip('전체', '전체', true) + brands.map(b => chip(b.name, b.name, false)).join('') + '</div></div></div>\n</div>\n' +
     '<section class="listing"><div class="in"><div class="sec-top"><h2>인기 순</h2><span class="count" id="count" aria-live="polite">' + items.length + '개 상품</span></div>\n' +
-    '<p class="note">' + NOTE + '</p>\n' +
+    '<p class="note">' + NOTE + '</p>' + formLegend() + '\n' +
     '<ul class="rows" id="beans">' + sorted.map(it => row(it, P)).join('\n') + '</ul>\n' +
     '<p class="empty" id="empty" hidden>조건에 맞는 상품이 없습니다. 검색어나 필터를 바꿔 보세요.</p></div></section>\n</div>\n</main>';
   return layout({
@@ -715,7 +774,7 @@ function listPage() {
 function brandPage(b) {
   const P = '../../';
   const list = itemsOf(b.name);
-  const fs_ = forms.filter(f => list.some(it => it.form === f));
+  const fs_ = forms.filter(f => list.some(it => hasForm(it, f)));
   const formsText = fs_.join('·');
   const top = list.filter(it => it.reviews != null)[0];
   const roasted = list.filter(it => it.roast > 0).length;
@@ -726,7 +785,7 @@ function brandPage(b) {
   const others = brands.filter(x => x.name !== b.name);
   const body = '<main>\n' + crumbs(P, [{ label: b.name }]) +
     '\n<section class="phead"><div class="in"><p class="eyebrow">Brand</p><div class="bhero">' + logoHtml(b, P, 'lg', false) + '<h1 class="page-title">' + esc(b.name) + ' ' + esc(formsText) + '</h1></div><p class="lead" style="margin-bottom:0">' + intro + '</p></div></section>\n' +
-    '<section class="listing"><div class="in" style="padding-top:8px"><div class="sec-top"><h2>후기가 많은 순</h2><span class="count">' + list.length + '개 상품</span></div><p class="note">' + NOTE + '</p>' +
+    '<section class="listing"><div class="in" style="padding-top:8px"><div class="sec-top"><h2>후기가 많은 순</h2><span class="count">' + list.length + '개 상품</span></div><p class="note">' + NOTE + '</p>' + formLegend() +
     '<ul class="rows nonum">' + list.map(it => row(it, P)).join('\n') + '</ul></div></section>\n' +
     '<section class="tight"><div class="in"><p class="eyebrow">Other Brands</p><div class="chips">' + others.map(o => '<a class="chip" href="' + P + 'brands/' + o.slug + '/">' + esc(o.name) + '</a>').join('') + '</div></div></section>\n</main>';
   return layout({
@@ -737,38 +796,52 @@ function brandPage(b) {
 }
 
 // ---------- 원두 페이지 ----------
+// 구매 링크는 이 페이지에서만 나옵니다. 형태별로 하나씩, 링크가 없는 형태는 네이버 쇼핑 검색으로 연결합니다.
+function buyBox(it) {
+  const anyCoupang = it.opts.some(o => /coupang\.com/.test(o.url));
+  const anyFallback = it.opts.some(o => !o.url);
+  const li = it.opts.map(o => {
+    const sel = sellerOf(o);
+    return '<li><span class="bf">' + iconSvg(o.form) + '<span><b>' + esc(o.form) + '</b>' + (o.size ? '<small>' + esc(o.size) + '</small>' : '') + '</span></span>' +
+      '<a class="cta2" href="' + esc(buyUrl(it, o)) + '" target="_blank" rel="noopener noreferrer sponsored">' + (sel ? esc(sel) + '에서 보기' : '네이버 쇼핑에서 찾기') + ' ↗</a></li>';
+  }).join('');
+  return '<div class="buybox"><p class="eyebrow">구매처 연결</p><ul class="buylist">' + li + '</ul>' +
+    (anyFallback ? '<p class="note">링크가 아직 등록되지 않은 형태는 네이버 쇼핑 검색 결과로 연결됩니다.</p>' : '') +
+    (site.affiliate ? '<p class="note">제휴 링크가 포함되어 있습니다.' + (anyCoupang ? ' ' + COUPANG_NOTICE : '') + '</p>' : '') + '</div>';
+}
+
 function beanPage(it) {
   const P = '../../';
   const b = brandByName.get(it.brand);
   const lead = it.description ? esc(it.description) :
-    esc(it.brand + ' ' + it.name + ' ' + it.form + '(' + it.size + ')의 컵 노트와 로스팅 정보입니다. 컵 노트는 ' + it.notes + '.');
+    esc(it.brand + ' ' + it.name + '(' + formsText(it) + ')의 컵 노트와 로스팅 정보입니다. 컵 노트는 ' + it.notes + '.');
   const rv = it.reviews == null ? '정보 없음' : fmt(it.reviews) + '건 · 마켓컬리';
   const guide = (it.roast > 0
     ? '<p>로스팅 단계는 ' + esc(it.roastLabel || ROAST_NAMES[it.roast - 1]) + '로 표기되어 있습니다. ' + esc(ROAST_TIP[it.roast]) + ' 물 온도는 일반적인 가이드이며, 로스터의 안내가 있으면 그쪽을 따르세요.</p>'
     : '<p>이 상품은 판매처 페이지에 로스팅 단계가 표기되어 있지 않아 \'그 외\'로 분류했습니다. 구매 전에 판매처의 상품 설명을 확인하세요.</p>') +
-    (FORM_TEXT[it.form] ? '<p>' + esc(it.form) + ': ' + esc(FORM_TEXT[it.form]) + '</p>' : '');
+    it.opts.map(o => FORM_TEXT[o.form] ? '<p>' + esc(o.form) + ': ' + esc(FORM_TEXT[o.form]) + '</p>' : '').join('') + (it.decaf ? '<p>디카페인: 카페인을 줄인 커피입니다.</p>' : '');
   const sameBrand = itemsOf(it.brand).filter(x => x.slug !== it.slug).slice(0, 4);
-  const sameForm = sorted.filter(x => x.form === it.form && x.brand !== it.brand).slice(0, 3);
+  const sameForm = sorted.filter(x => hasForm(x, it.opts[0].form) && x.brand !== it.brand).slice(0, 3);
   const body = '<main>\n' + crumbs(P, [{ label: it.brand, href: P + 'brands/' + b.slug + '/' }, { label: it.name }]) +
-    '\n<div class="in"><div class="dpage"><div><div class="d-id">' + logoHtml(b, P, 'lg', false) + '<div style="min-width:0"><a class="d-brand" href="' + P + 'brands/' + b.slug + '/">' + esc(it.brand) + '</a><p class="eyebrow" style="margin:2px 0 0">' + esc(it.form) + '</p></div></div>' +
+    '\n<div class="in"><div class="dpage"><div><div class="d-id">' + logoHtml(b, P, 'lg', false) + '<div style="min-width:0"><a class="d-brand" href="' + P + 'brands/' + b.slug + '/">' + esc(it.brand) + '</a><p class="eyebrow" style="margin:2px 0 0">' + esc(formsText(it)) + (it.decaf ? ' · 디카페인' : '') + '</p></div></div>' +
     '<h1 class="d-name">' + esc(it.name) + '</h1>' +
     '<p class="lead" style="margin-top:16px">' + lead + '</p>' +
-    '<div class="actions"><a class="cta2" href="' + esc(buyUrl(it)) + '" target="_blank" rel="noopener noreferrer sponsored">구매처 연결 ↗</a><a class="ghost" href="' + P + 'brands/' + b.slug + '/">' + esc(it.brand) + ' 전체 보기</a></div>' +
-    (site.affiliate ? '<p class="note" style="margin-top:10px">제휴 링크 포함</p>' : '') + '</div>\n' +
+    buyBox(it) +
+    '<div class="actions" style="margin-top:22px"><a class="ghost" href="' + P + 'brands/' + b.slug + '/">' + esc(it.brand) + ' 전체 보기</a></div></div>\n' +
     '<div class="sheet">' +
     '<div class="r"><span>브랜드</span><span><b>' + esc(it.brand) + '</b></span></div>' +
-    '<div class="r"><span>형태</span><span>' + esc((it.form + ' ' + it.size).trim()) + '</span></div>' +
+    '<div class="r"><span>형태</span><span>' + esc(metaText(it)) + '</span></div>' +
     '<div class="r"><span>로스팅</span><span>' + roastHtml(it) + '</span></div>' +
     '<div class="r"><span>컵 노트</span><span>' + esc(it.notes) + '</span></div>' +
     (it.rank != null ? '<div class="r"><span>인기 순위</span><span>' + it.rank + '위</span></div>' : '') +
     '<div class="r"><span>후기</span><span>' + esc(rv) + '</span></div></div></div></div>\n' +
     '<section class="tight"><div class="in"><h2>로스팅과 추출 가이드</h2><div class="prose">' + guide + '</div></div></section>\n' +
     (sameBrand.length ? '<section class="tight"><div class="in"><h2>' + esc(it.brand) + '의 다른 상품</h2><ul class="rows nonum">' + sameBrand.map(x => row(x, P)).join('\n') + '</ul></div></section>\n' : '') +
-    (sameForm.length ? '<section class="tight"><div class="in"><h2>다른 브랜드의 ' + esc(it.form) + '</h2><ul class="rows nonum">' + sameForm.map(x => row(x, P)).join('\n') + '</ul></div></section>\n' : '') +
+    (sameForm.length ? '<section class="tight"><div class="in"><h2>다른 브랜드의 ' + esc(it.opts[0].form) + '</h2><ul class="rows nonum">' + sameForm.map(x => row(x, P)).join('\n') + '</ul></div></section>\n' : '') +
     '</main>';
-  const descTxt = it.brand + ' ' + it.name + ' ' + it.form + ' ' + it.size + '. 컵 노트: ' + it.notes + '.' + (it.roast > 0 ? ' 로스팅: ' + (it.roastLabel || ROAST_NAMES[it.roast - 1]) + '.' : '') + (it.reviews != null ? ' 판매처 후기 ' + fmt(it.reviews) + '건.' : '');
+  const descTxt = it.brand + ' ' + it.name + ' ' + formsText(it) + '. 컵 노트: ' + it.notes + '.' + (it.roast > 0 ? ' 로스팅: ' + (it.roastLabel || ROAST_NAMES[it.roast - 1]) + '.' : '') + (it.reviews != null ? ' 판매처 후기 ' + fmt(it.reviews) + '건.' : '');
   return layout({
-    P, urlPath: beanUrl(it), title: it.brand + ' ' + it.name + ' ' + it.form + ' 컵노트·로스팅 | ' + site.name,
+    P, urlPath: beanUrl(it), title: it.brand + ' ' + it.name + ' ' + formsText(it) + ' 컵노트·로스팅 | ' + site.name,
     desc: trunc(it.description || descTxt, 160), body,
     ld: breadcrumbLd([{ name: '홈', path: '/' }, { name: it.brand, path: brandUrl(it.brand) }, { name: it.name, path: beanUrl(it) }])
   });
