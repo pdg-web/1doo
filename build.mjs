@@ -543,6 +543,9 @@ function sellerOf(o) {
   if (!o.url) return '';
   if (/coupang\.com/.test(o.url)) return '쿠팡';
   if (/kurly\.com/.test(o.url)) return '마켓컬리';
+  if (/terarosa\.com/.test(o.url)) return '테라로사 공식몰';
+  if (/centercoffee\.co\.kr/.test(o.url)) return '센터커피 공식몰';
+  if (/anthracitecoffee\.com/.test(o.url)) return '앤트러사이트 공식몰';
   return '판매처';
 }
 function buyUrl(it, o) {

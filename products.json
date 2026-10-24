@@ -13,7 +13,7 @@
     "description: 상품 페이지 첫 문단에 보일 설명(선택)입니다. 직접 쓴 설명이 있으면 검색에도 도움이 됩니다.",
     "featured: true인 상품이 첫 화면 슬라이드에 나옵니다."
   ],
-  "updated": "2026-10-23",
+  "updated": "2026-10-24",
   "site": {
     "name": "원두노트",
     "url": "https://pdg-web.github.io/1doo",
@@ -347,7 +347,7 @@
       "options": {
         "원두": {
           "size": "200g",
-          "url": ""
+          "url": "https://link.coupang.com/a/h6da3YqAEu"
         }
       }
     },
@@ -364,7 +364,7 @@
       "options": {
         "원두": {
           "size": "200g",
-          "url": ""
+          "url": "https://link.coupang.com/a/h6dczrQLlI"
         }
       }
     },
@@ -381,7 +381,7 @@
       "options": {
         "원두": {
           "size": "200g",
-          "url": ""
+          "url": "https://link.coupang.com/a/h6degvp48a"
         }
       }
     },
@@ -401,8 +401,8 @@
           "url": ""
         },
         "원두": {
-          "size": "",
-          "url": ""
+          "size": "210g",
+          "url": "https://link.coupang.com/a/h56PZPOzM4"
         }
       }
     },
@@ -423,7 +423,7 @@
         },
         "원두": {
           "size": "",
-          "url": ""
+          "url": "https://link.coupang.com/a/h6crWRrf76"
         }
       }
     },
@@ -444,70 +444,7 @@
         },
         "원두": {
           "size": "",
-          "url": ""
-        }
-      }
-    },
-    {
-      "slug": "center-colombia-mujeres-tolima",
-      "brand": "센터커피",
-      "name": "콜롬비아 무헤레스 톨리만 워시드",
-      "notes": "포도, 체리, 다크 초콜릿",
-      "roast": 0,
-      "roastLabel": "",
-      "reviews": 1267,
-      "featured": false,
-      "description": "",
-      "options": {
-        "드립백": {
-          "size": "10g x 7개",
-          "url": ""
-        },
-        "원두": {
-          "size": "",
-          "url": ""
-        }
-      }
-    },
-    {
-      "slug": "center-brazil-santa-ines",
-      "brand": "센터커피",
-      "name": "브라질 파젠다 산타 이네스 내추럴",
-      "notes": "오렌지, 마카다미아, 밀크 초콜릿",
-      "roast": 0,
-      "roastLabel": "",
-      "reviews": 1267,
-      "featured": false,
-      "description": "",
-      "options": {
-        "드립백": {
-          "size": "10g x 7개",
-          "url": ""
-        },
-        "원두": {
-          "size": "",
-          "url": ""
-        }
-      }
-    },
-    {
-      "slug": "center-friday-capsule",
-      "brand": "센터커피",
-      "name": "프라이데이 커피 캡슐",
-      "notes": "체리, 무화과, 흑설탕 (네스프레소 호환)",
-      "roast": 0,
-      "roastLabel": "",
-      "reviews": 488,
-      "featured": false,
-      "description": "",
-      "options": {
-        "캡슐": {
-          "size": "10개입",
-          "url": ""
-        },
-        "원두": {
-          "size": "",
-          "url": ""
+          "url": "https://link.coupang.com/a/h6cxgMVFJI"
         }
       }
     },
@@ -524,11 +461,7 @@
       "options": {
         "콜드브루": {
           "size": "200mL",
-          "url": ""
-        },
-        "원두": {
-          "size": "",
-          "url": ""
+          "url": "https://www.centercoffee.co.kr/91/?idx=86"
         }
       }
     },
@@ -545,11 +478,7 @@
       "options": {
         "드립백": {
           "size": "10g x 7개",
-          "url": ""
-        },
-        "원두": {
-          "size": "",
-          "url": ""
+          "url": "https://link.coupang.com/a/h6cLaYEtjw"
         }
       },
       "decaf": true
@@ -567,7 +496,7 @@
       "options": {
         "원두": {
           "size": "250g / 500g",
-          "url": ""
+          "url": "https://www.kurly.com/goods/1001556320"
         }
       }
     },
@@ -584,7 +513,11 @@
       "options": {
         "원두": {
           "size": "250g",
-          "url": ""
+          "url": "https://link.coupang.com/a/h5nPZTCr7I"
+        },
+        "드립백": {
+          "size": "",
+          "url": "https://link.coupang.com/a/h5oiH3yx6i"
         }
       }
     },
@@ -600,8 +533,8 @@
       "description": "",
       "options": {
         "원두": {
-          "size": "250g",
-          "url": ""
+          "size": "1kg",
+          "url": "https://link.coupang.com/a/h56b7Ft5l6"
         }
       }
     },
@@ -618,7 +551,7 @@
       "options": {
         "원두": {
           "size": "250g",
-          "url": ""
+          "url": "https://terarosa.com/product/detail/?ItemCode=100019&category=12"
         }
       }
     },
@@ -635,7 +568,7 @@
       "options": {
         "원두": {
           "size": "200g",
-          "url": ""
+          "url": "https://anthracitecoffee.com/shop/?idx=71"
         }
       }
     },
@@ -652,7 +585,7 @@
       "options": {
         "원두": {
           "size": "200g",
-          "url": ""
+          "url": "https://link.coupang.com/a/h6c4rlSDAq"
         }
       }
     },
@@ -669,7 +602,7 @@
       "options": {
         "원두": {
           "size": "200g",
-          "url": ""
+          "url": "https://anthracitecoffee.com/shop/?idx=76"
         }
       }
     },
