@@ -611,6 +611,17 @@ function blocks(P, asButton) {
   }).join('');
 }
 
+// ---------- 파비콘 (주소창/탭 아이콘) ----------
+// 저장소 맨 위에 favicon.svg, favicon.ico, favicon.png, apple-touch-icon.png 중 있는 파일을 자동으로 사용합니다. 하나도 없으면 기본 아이콘을 만듭니다.
+const FAV_FILES = [['favicon.svg', 'image/svg+xml', 'icon'], ['favicon.ico', 'image/x-icon', 'icon'], ['favicon.png', 'image/png', 'icon'], ['apple-touch-icon.png', 'image/png', 'apple-touch-icon']]
+  .filter(f => fs.existsSync(path.join(ROOT, f[0])));
+const DEFAULT_FAV = !FAV_FILES.some(f => f[2] === 'icon');
+const DEFAULT_FAV_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1B130E"/><circle cx="32" cy="32" r="14" fill="#F2A93B"/></svg>';
+function faviconTags(P) {
+  if (DEFAULT_FAV) return '<link rel="icon" href="' + P + 'favicon.svg" type="image/svg+xml">\n';
+  return FAV_FILES.map(f => '<link rel="' + f[2] + '" href="' + P + f[0] + '" type="' + f[1] + '">\n').join('');
+}
+
 // ---------- 페이지 뼈대 ----------
 function layout({ P, urlPath, title, desc, body, ld, hero }) {
   const root = P || './';
@@ -626,7 +637,7 @@ function layout({ P, urlPath, title, desc, body, ld, hero }) {
     '<meta name="twitter:card" content="summary">\n' +
     '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n' +
     '<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">\n' +
-    '<link rel="stylesheet" href="' + P + 'style.css">\n' +
+    '<link rel="stylesheet" href="' + P + 'style.css">\n' + faviconTags(P) +
     (ld ? ld + '\n' : '') +
     '</head>\n<body>\n<div class="band">\n' +
     '<header class="top"><div class="in"><a class="brand" href="' + root + '"><i></i>' + esc(site.name) + '</a>' +
@@ -862,6 +873,8 @@ brands.forEach(b => {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.copyFileSync(path.join(ROOT, b.logoPath), dest);
 });
+FAV_FILES.forEach(f => fs.copyFileSync(path.join(ROOT, f[0]), path.join(OUT, f[0])));
+if (DEFAULT_FAV) write('favicon.svg', DEFAULT_FAV_SVG);
 write('style.css', CSS);
 write('app.js', APPJS);
 
@@ -872,7 +885,7 @@ write('robots.txt', 'User-agent: *\nAllow: /\n\nSitemap: ' + site.url + '/sitema
 write('404.html', '<!doctype html>\n<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
   '<title>페이지를 찾을 수 없습니다 | ' + esc(site.name) + '</title><meta name="robots" content="noindex">' +
   '<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">' +
-  '<link rel="stylesheet" href="' + BASE + '/style.css"></head>' +
+  '<link rel="stylesheet" href="' + BASE + '/style.css">' + faviconTags(BASE + '/') + '</head>' +
   '<body><div class="in"><section class="phead" style="padding-top:64px"><p class="eyebrow">404</p><h1 class="page-title">페이지를 찾을 수 없습니다</h1>' +
   '<p class="lead">주소가 바뀌었거나 없는 페이지입니다.</p><div class="actions"><a class="cta2" href="' + BASE + '/">홈으로</a></div></section></div></body></html>\n');
 
