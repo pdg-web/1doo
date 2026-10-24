@@ -442,7 +442,7 @@ const APPJS = String.raw`(function () {
 `;
 
 // ---------- 설정과 검증 ----------
-const site = Object.assign({ name: '원두노트', url: '', affiliate: false }, data.site || {});
+const site = Object.assign({ name: '원두노트', url: '', affiliate: false, googleVerification: '', naverVerification: '' }, data.site || {});
 site.url = String(site.url || '').replace(/\/+$/, '');
 if (!/^https?:\/\//.test(site.url)) fail('site.url 은 https:// 로 시작하는 사이트 주소여야 합니다.');
 const BASE = new URL(site.url).pathname.replace(/\/+$/, '');
@@ -635,6 +635,8 @@ function layout({ P, urlPath, title, desc, body, ld, hero }) {
     '<meta property="og:title" content="' + esc(title) + '">\n<meta property="og:description" content="' + esc(desc) + '">\n' +
     '<meta property="og:url" content="' + esc(canonical) + '">\n<meta property="og:locale" content="ko_KR">\n' +
     '<meta name="twitter:card" content="summary">\n' +
+    (site.googleVerification ? '<meta name="google-site-verification" content="' + esc(site.googleVerification) + '">\n' : '') +
+    (site.naverVerification ? '<meta name="naver-site-verification" content="' + esc(site.naverVerification) + '">\n' : '') +
     '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n' +
     '<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">\n' +
     '<link rel="stylesheet" href="' + P + 'style.css">\n' + faviconTags(P) +
@@ -873,6 +875,8 @@ brands.forEach(b => {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.copyFileSync(path.join(ROOT, b.logoPath), dest);
 });
+// 검색엔진 소유확인 파일(google1234abcd.html, naver1234abcd.html 등)이 저장소 맨 위에 있으면 그대로 복사합니다.
+fs.readdirSync(ROOT).filter(f => /^(google|naver)[A-Za-z0-9_-]*\.html$/.test(f)).forEach(f => fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f)));
 FAV_FILES.forEach(f => fs.copyFileSync(path.join(ROOT, f[0]), path.join(OUT, f[0])));
 if (DEFAULT_FAV) write('favicon.svg', DEFAULT_FAV_SVG);
 write('style.css', CSS);
